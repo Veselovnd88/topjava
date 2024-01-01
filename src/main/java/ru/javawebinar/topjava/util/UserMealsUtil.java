@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class UserMealsUtil {
@@ -31,6 +32,9 @@ public class UserMealsUtil {
         mealsTo.forEach(System.out::println);
         System.out.println("---------");
         filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000)
+                .forEach(System.out::println);
+        System.out.println("------Cycle with one pass-----");
+        filteredByCycleWithOnePass(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000)
                 .forEach(System.out::println);
     }
 
@@ -71,8 +75,22 @@ public class UserMealsUtil {
 
     public static List<UserMealWithExcess> filteredByCycleWithOnePass(List<UserMeal> meals, LocalTime startTime,
                                                                       LocalTime endTime, int caloriesPerDay) {
-
-        return Collections.emptyList();
+        Map<LocalDate, Integer> caloriesByDateMap = new HashMap<>();
+        List<UserMealWithExcess> mealsWithExcess = new ArrayList<>();
+        Consumer<Boolean> consumer = Object::toString;
+        for (UserMeal userMeal : meals) {
+            LocalDate localDate = userMeal.getDateTime().toLocalDate();
+            caloriesByDateMap.merge(localDate, userMeal.getCalories(), Integer::sum);
+            if (TimeUtil.isBetweenHalfOpen(userMeal.getDateTime().toLocalTime(), startTime, endTime)) {
+                consumer = consumer.andThen(b -> mealsWithExcess.add(
+                        new UserMealWithExcess(userMeal.getDateTime(), userMeal.getDescription(),
+                                userMeal.getCalories(),
+                                caloriesByDateMap.get(localDate) > caloriesPerDay
+                        )));
+            }
+        }
+        consumer.accept(true);
+        return mealsWithExcess;
     }
 
     public static List<UserMealWithExcess> filteredByStreamsWithOnePass(List<UserMeal> meals, LocalTime startTime,
