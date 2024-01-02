@@ -32,19 +32,22 @@ public class UserMealsUtil {
         List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(13, 15), 2000);
         mealsTo.forEach(System.out::println);
         System.out.println("---------");
-        filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000)
+        filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(13, 15), 2000)
                 .forEach(System.out::println);
         System.out.println("------Cycle with one pass (Consumer)-----");
-        filteredByCycleWithConsumer(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000)
+        filteredByCycleWithConsumer(meals, LocalTime.of(7, 0), LocalTime.of(13, 15), 2000)
                 .forEach(System.out::println);
         System.out.println("------Cycle with one pass (Predicate)-----");
-        filteredByCycleWithPredicate(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000)
+        filteredByCycleWithPredicate(meals, LocalTime.of(7, 0), LocalTime.of(13, 15), 2000)
                 .forEach(System.out::println);
         System.out.println("------Stream with one pass");
-        filteredByStreamsWithOnePass(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000)
+        filteredByStreamsWithOnePass(meals, LocalTime.of(7, 0), LocalTime.of(13, 15), 2000)
                 .forEach(System.out::println);
         System.out.println("------Stream with Collecting and then");
-        filteredByStreamsWithOnePassCollectingAndThen(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000)
+        filteredByStreamsWithOnePassCollectingAndThen(meals, LocalTime.of(7, 0), LocalTime.of(13, 15), 2000)
+                .forEach(System.out::println);
+        System.out.println("-----Stream with custom collector");
+        filteredByStreamsWithOnePassWithCustomCollector(meals, LocalTime.of(7, 0), LocalTime.of(13, 15), 2000)
                 .forEach(System.out::println);
     }
 
@@ -148,8 +151,21 @@ public class UserMealsUtil {
                 Collectors.groupingBy(userMeal -> userMeal.getDateTime().toLocalDate()), finisher));
     }
 
+    public static List<UserMealWithExcess> filteredByStreamsWithOnePassWithCustomCollector(List<UserMeal> meals,
+                                                                                           LocalTime startTime,
+                                                                                           LocalTime endTime,
+                                                                                           int caloriesPerDay) {
+        List<UserMealWithExcess> collect = meals.stream().collect(UserMealCollector.toUserMealWithExcess(caloriesPerDay));
 
-    private static UserMealWithExcess convertToUserMealWithExcess(UserMeal userMeal, boolean excess) {
+
+        return collect.stream().filter(userMeal -> TimeUtil.isBetweenHalfOpen(
+                userMeal.getDateTime().toLocalTime(),
+                startTime,
+                endTime)).collect(Collectors.toList());
+    }
+
+
+    public static UserMealWithExcess convertToUserMealWithExcess(UserMeal userMeal, boolean excess) {
         return new UserMealWithExcess(userMeal.getDateTime(),
                 userMeal.getDescription(),
                 userMeal.getCalories(),
