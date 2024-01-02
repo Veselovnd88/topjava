@@ -129,6 +129,14 @@ class UserMealsUtilTest {
                         LocalDate.of(2020, Month.JANUARY, 31), //date with excess
                         LocalDate.of(2020, Month.JANUARY, 30), //date without excess
                         4 //list size
+                ),
+                Arguments.of(MealListUtils.veryBigList(),
+                        LocalTime.of(7, 0), //start time
+                        LocalTime.of(13, 15), //end time
+                        2000, //calories
+                        LocalDate.of(2020, Month.JANUARY, 31), //date with excess
+                        LocalDate.of(2020, Month.JANUARY, 30), //date without excess
+                        10004 //list size
                 )
         );
     }
