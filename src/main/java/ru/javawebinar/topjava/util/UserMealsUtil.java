@@ -156,13 +156,8 @@ public class UserMealsUtil {
                                                                                            LocalTime startTime,
                                                                                            LocalTime endTime,
                                                                                            int caloriesPerDay) {
-        List<UserMealWithExcess> collect = meals.stream()
-                .collect(UserMealCollector.toUserMealWithExcess(caloriesPerDay));
-        return collect.stream()
-                .filter(userMeal -> TimeUtil.isBetweenHalfOpen(
-                        userMeal.getDateTime().toLocalTime(),
-                        startTime,
-                        endTime)).collect(Collectors.toList());
+        return meals.stream()
+                .collect(UserMealCollector.toUserMealWithExcess(caloriesPerDay, startTime, endTime));
     }
 
 

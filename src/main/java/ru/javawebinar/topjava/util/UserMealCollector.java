@@ -4,6 +4,7 @@ import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExcess;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,12 +24,20 @@ public class UserMealCollector implements Collector<UserMeal, Map<LocalDate, Lis
 
     private final int caloriesPerDay;
 
-    public UserMealCollector(int caloriesPerDay) {
+    private final LocalTime startTime;
+
+    private final LocalTime endTime;
+
+    public UserMealCollector(int caloriesPerDay, LocalTime startTime, LocalTime endTime) {
         this.caloriesPerDay = caloriesPerDay;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
-    public static UserMealCollector toUserMealWithExcess(int caloriesPerDay) {
-        return new UserMealCollector(caloriesPerDay);
+    public static UserMealCollector toUserMealWithExcess(int caloriesPerDay,
+                                                         LocalTime startTime,
+                                                         LocalTime endTime) {
+        return new UserMealCollector(caloriesPerDay, startTime, endTime);
     }
 
     @Override
@@ -60,7 +69,12 @@ public class UserMealCollector implements Collector<UserMeal, Map<LocalDate, Lis
         //apply additional logic and convert to final collection
         return (localDateListMap -> localDateListMap.values().stream().flatMap(lst -> {
             boolean isExceed = lst.stream().mapToInt(UserMeal::getCalories).sum() > caloriesPerDay;
-            return lst.stream().map(userMeal -> UserMealsUtil.convertToUserMealWithExcess(userMeal, isExceed));
+            return lst.stream()
+                    .filter(userMeal -> TimeUtil.isBetweenHalfOpen(
+                            userMeal.getDateTime().toLocalTime(),
+                            startTime,
+                            endTime))
+                    .map(userMeal -> UserMealsUtil.convertToUserMealWithExcess(userMeal, isExceed));
         }).collect(Collectors.toList()));
     }
 
