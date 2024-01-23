@@ -76,8 +76,7 @@ public class UserMealsUtil {
                         Collectors.summingInt(UserMeal::getCalories)));
 
         return meals.stream()
-                .filter(userMeal -> TimeUtil
-                        .isBetweenHalfOpen(userMeal.getDateTime().toLocalTime(), startTime, endTime))
+                .filter(userMeal -> TimeUtil.isBetweenHalfOpen(userMeal.getDateTime().toLocalTime(), startTime, endTime))
                 .map(userMeal -> convertToUserMealWithExcess(
                         userMeal,
                         caloriesPerDayMap.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay))
@@ -124,9 +123,9 @@ public class UserMealsUtil {
         return meals.stream()
                 .collect(Collectors.groupingBy(userMeal -> userMeal.getDateTime().toLocalDate())).values() //map
                 .stream()
-                .flatMap(lst -> { // Stream<List<UserMeal>> go for each sublist and calculate total calories
-                    boolean isExceed = lst.stream().mapToInt(UserMeal::getCalories).sum() > caloriesPerDay;
-                    return lst.stream().filter(userMeal -> TimeUtil.isBetweenHalfOpen(
+                .flatMap(mealsPerDay -> { // Stream<List<UserMeal>> go for each sublist and calculate total calories
+                    boolean isExceed = mealsPerDay.stream().mapToInt(UserMeal::getCalories).sum() > caloriesPerDay;
+                    return mealsPerDay.stream().filter(userMeal -> TimeUtil.isBetweenHalfOpen(
                                     userMeal.getDateTime().toLocalTime(),
                                     startTime,
                                     endTime))

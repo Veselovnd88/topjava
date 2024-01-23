@@ -6,7 +6,6 @@ import ru.javawebinar.topjava.model.UserMealWithExcess;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,13 +47,8 @@ public class UserMealCollector implements Collector<UserMeal, Map<LocalDate, Lis
     @Override
     public BiConsumer<Map<LocalDate, List<UserMeal>>, UserMeal> accumulator() {
         //logic of accumulator, how new values from stream should be accumulated in passed collection
-        return ((localDateListMap, userMeal) -> localDateListMap.merge(userMeal.getDateTime().toLocalDate(),
-                Collections.singletonList(userMeal),
-                (ov, nv) -> {
-                    List<UserMeal> old = new ArrayList<>(ov);
-                    old.addAll(nv);
-                    return new ArrayList<>(old);
-                }));
+        return ((mealsByDate, userMeal) -> mealsByDate.computeIfAbsent(userMeal.getDateTime().toLocalDate(),
+                mealDate -> new ArrayList<>()).add(userMeal));
     }
 
     @Override
@@ -67,15 +61,16 @@ public class UserMealCollector implements Collector<UserMeal, Map<LocalDate, Lis
     @Override
     public Function<Map<LocalDate, List<UserMeal>>, List<UserMealWithExcess>> finisher() {
         //apply additional logic and convert to final collection
-        return (localDateListMap -> localDateListMap.values().stream().flatMap(lst -> {
-            boolean isExceed = lst.stream().mapToInt(UserMeal::getCalories).sum() > caloriesPerDay;
-            return lst.stream()
-                    .filter(userMeal -> TimeUtil.isBetweenHalfOpen(
-                            userMeal.getDateTime().toLocalTime(),
-                            startTime,
-                            endTime))
-                    .map(userMeal -> UserMealsUtil.convertToUserMealWithExcess(userMeal, isExceed));
-        }).collect(Collectors.toList()));
+        return (mealsByDate -> mealsByDate.values().stream()
+                .flatMap(mealsPerDay -> {
+                    boolean isExceed = mealsPerDay.stream().mapToInt(UserMeal::getCalories).sum() > caloriesPerDay;
+                    return mealsPerDay.stream()
+                            .filter(userMeal -> TimeUtil.isBetweenHalfOpen(
+                                    userMeal.getDateTime().toLocalTime(),
+                                    startTime,
+                                    endTime))
+                            .map(userMeal -> UserMealsUtil.convertToUserMealWithExcess(userMeal, isExceed));
+                }).collect(Collectors.toList()));
     }
 
     @Override
