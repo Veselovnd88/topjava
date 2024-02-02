@@ -30,7 +30,7 @@ public class MealServlet extends HttpServlet {
         List<Meal> meals = mealRepository.findAll();
         List<MealTo> mealTos = MealsUtil.filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, MealsUtil.CALORIES_PER_DAY);
         request.setAttribute("meals", mealTos);
-        request.setAttribute("dateTimeFormatter", TimeUtil.dateTimeFormatter());
+        request.setAttribute("dateTimeFormatter", TimeUtil.DATETIME_FMT);
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
     }
 
