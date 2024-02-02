@@ -20,7 +20,7 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        log.debug("redirect to meals");
+        log.debug("forward request to meals.jsp");
         List<MealTo> meals = MealsUtil.hardCodedMealTos();
         request.setAttribute("meals", meals);
         request.setAttribute("dateTimeFormatter", TimeUtil.dateTimeFormatter());
