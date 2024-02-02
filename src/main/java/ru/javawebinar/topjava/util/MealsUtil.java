@@ -52,8 +52,4 @@ public class MealsUtil {
         );
     }
 
-    public static List<MealTo> hardCodedMealTos() {
-        return filteredByStreams(hardCodedMeals(), LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
-    }
-
 }
