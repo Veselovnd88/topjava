@@ -50,8 +50,9 @@ public class MealRepositoryImpl implements MealRepository {
             return meal;
         } else {
             if (!storage.containsKey(id)) {
-                log.warn(String.format(ExceptionUtils.MEAL_NOT_FOUND, id));
-                throw new MealNotFoundException(String.format(ExceptionUtils.MEAL_NOT_FOUND, id));
+                String exceptionMessage = String.format(ExceptionUtils.MEAL_NOT_FOUND, id);
+                log.warn(exceptionMessage);
+                throw new MealNotFoundException(exceptionMessage);
             }
             Meal saved = storage.put(id, meal);
             log.info("Meal with [id: {}] successfully updated", id);
