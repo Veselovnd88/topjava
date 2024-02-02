@@ -53,12 +53,7 @@ public class MealsUtil {
     }
 
     public static List<MealTo> hardCodedMealTos() {
-        List<Meal> meals = hardCodedMeals();
-        Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
-                .collect(Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories)));
-        return meals.stream()
-                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > CALORIES_PER_DAY))
-                .collect(Collectors.toList());
+        return filteredByStreams(hardCodedMeals(), LocalTime.MIN, LocalTime.MAX, CALORIES_PER_DAY);
     }
 
 }
