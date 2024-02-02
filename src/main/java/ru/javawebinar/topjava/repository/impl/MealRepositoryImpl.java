@@ -41,23 +41,22 @@ public class MealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public Meal update(Meal mealToUpdate) {
-        Integer id = mealToUpdate.getId();
-        if (!storage.containsKey(id)) {
-            log.warn(String.format(ExceptionUtils.MEAL_NOT_FOUND, id));
-            throw new MealNotFoundException(String.format(ExceptionUtils.MEAL_NOT_FOUND, id));
-        }
-        Meal saved = storage.put(id, mealToUpdate);
-        log.info("Meal with [id: {}] successfully updated", id);
-        return saved;
-    }
-
-    @Override
     public Meal save(Meal meal) {
-        meal.setId(generateNextId());
-        storage.put(meal.getId(), meal);
-        log.info("Meal with [id: {}] successfully saved in storage", meal.getId());
-        return meal;
+        Integer id = meal.getId();
+        if (id == null) {
+            meal.setId(generateNextId());
+            storage.put(meal.getId(), meal);
+            log.info("Meal with [id: {}] successfully saved in storage", meal.getId());
+            return meal;
+        } else {
+            if (!storage.containsKey(id)) {
+                log.warn(String.format(ExceptionUtils.MEAL_NOT_FOUND, id));
+                throw new MealNotFoundException(String.format(ExceptionUtils.MEAL_NOT_FOUND, id));
+            }
+            Meal saved = storage.put(id, meal);
+            log.info("Meal with [id: {}] successfully updated", id);
+            return saved;
+        }
     }
 
     @Override

@@ -11,8 +11,6 @@ public interface MealRepository {
 
     List<Meal> findAll();
 
-    Meal update(Meal mealToUpdate);
-
     Meal save(Meal meal);
 
     void deleteById(Integer id);
