@@ -4,7 +4,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class TimeUtil {
-
     private TimeUtil() {
         throw new AssertionError("No instance for util class");
     }
