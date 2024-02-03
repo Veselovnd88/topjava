@@ -24,6 +24,16 @@
                 <c:out value="${meal.dateTime.format(dateTimeFormatter)}"/></td>
             <td><c:out value="${meal.description}"/></td>
             <td><c:out value="${meal.calories}"/></td>
+
+            <td>
+                <a href="meals?action=edit&id=<c:out value="${meal.id}"/>">Update</a>
+            </td>
+            <td>
+                <form action="meals?action=delete&id=<c:out value="${meal.id}"/>" method="post">
+                    <input type="submit" value="Delete"/>
+                </form>
+            </td>
+
         </tr>
     </c:forEach>
 
