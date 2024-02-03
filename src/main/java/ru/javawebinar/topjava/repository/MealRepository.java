@@ -7,12 +7,12 @@ import java.util.Optional;
 
 public interface MealRepository {
 
-    Optional<Meal> findById(Integer id);
+    Optional<Meal> findById(int id);
 
     List<Meal> findAll();
 
     Meal save(Meal meal);
 
-    void deleteById(Integer id);
+    void deleteById(int id);
 
 }

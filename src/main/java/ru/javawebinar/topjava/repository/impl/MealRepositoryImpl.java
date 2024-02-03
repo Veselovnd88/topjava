@@ -29,7 +29,7 @@ public class MealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public Optional<Meal> findById(Integer id) {
+    public Optional<Meal> findById(int id) {
         log.debug("Retrieving meal with [id: {}]", id);
         return Optional.ofNullable(storage.get(id));
     }
@@ -61,7 +61,7 @@ public class MealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(int id) {
         log.info("Meal with [id: {}] was deleted", id);
         storage.remove(id);
     }
