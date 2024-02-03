@@ -28,7 +28,7 @@ public class MealServlet extends HttpServlet {
 
     public static final String MEALS_LIST_PAGE = "/meals.jsp";
 
-    public static final String CREATE_EDIT_PAGE = "/meal.jsp";
+    public static final String CREATE_EDIT_PAGE = "/mealCreate.jsp";
 
     public static final String EDIT_ACTION = "edit";
 
@@ -71,10 +71,14 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("Processing POST method to /meals");
+        request.setCharacterEncoding("UTF-8");
         String action = request.getParameter(ACTION);
         String forward = "";
         if (action == null || !actions.containsKey(action)) {
-            forward = CREATE_EDIT_PAGE;
+            String description = request.getParameter("description");
+            String calories = request.getParameter("calories");
+
+            forward = MEALS_LIST_PAGE;
         } else if (action.equalsIgnoreCase(DELETE_ACTION)) {
             int id = Integer.parseInt(request.getParameter("id"));
             mealRepository.deleteById(id);
