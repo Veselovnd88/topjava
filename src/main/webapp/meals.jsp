@@ -10,6 +10,10 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
+<a href="mealCreate.jsp">Add meal</a>
+<hr>
+<br>
+<br>
 
 <table border="3" cellspacing="5" cellpadding="5">
     <tr align="center">

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
@@ -26,17 +27,19 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
 
-    public static final String MEALS_LIST_PAGE = "/meals.jsp";
+    private static final String MEALS_LIST_PAGE = "/meals.jsp";
 
-    public static final String CREATE_EDIT_PAGE = "/mealCreate.jsp";
+    private static final String CREATE_EDIT_PAGE = "/mealCreate.jsp";
 
-    public static final String EDIT_ACTION = "edit";
+    private static final String EDIT_ACTION = "edit";
 
-    public static final String DELETE_ACTION = "delete";
+    private static final String DELETE_ACTION = "delete";
 
-    public static final String ACTION = "action";
+    private static final String ACTION = "action";
 
-    public final Map<String, String> actions = new HashMap<>();
+    public static final String ID_PARAM = "id";
+
+    private final Map<String, String> actions = new HashMap<>();
 
     private final MealRepository mealRepository = new MealRepositoryImpl();
 
@@ -51,11 +54,13 @@ public class MealServlet extends HttpServlet {
         String forward = "";
         String action = request.getParameter(ACTION);
         if (action == null || !actions.containsKey(action)) {
+            log.debug("Getting meals list");
             List<MealTo> mealTos = getMealTos();
             setUpRequestWithMealsList(request, mealTos);
             forward = MEALS_LIST_PAGE;
         } else if (action.equalsIgnoreCase(EDIT_ACTION)) {
-            int id = Integer.parseInt(request.getParameter("id"));
+            log.debug("Editing meals");
+            int id = Integer.parseInt(request.getParameter(ID_PARAM));
             Optional<Meal> mealById = mealRepository.findById(id);
             Meal meal = mealById.orElseThrow(() -> {
                 String exceptionMessage = String.format(ExceptionUtils.MEAL_NOT_FOUND, id);
@@ -73,20 +78,23 @@ public class MealServlet extends HttpServlet {
         log.debug("Processing POST method to /meals");
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter(ACTION);
-        String forward = "";
         if (action == null || !actions.containsKey(action)) {
+            log.debug("Updating/saving meal");
             String description = request.getParameter("description");
-            String calories = request.getParameter("calories");
-
-            forward = MEALS_LIST_PAGE;
+            int calories = Integer.parseInt(request.getParameter("calories"));
+            LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("dateTime"));
+            Meal meal = new Meal(dateTime, description, calories);
+            String id = request.getParameter(ID_PARAM);
+            if (!id.isEmpty()) {
+                meal.setId(Integer.valueOf(id));
+            }
+            mealRepository.save(meal);
         } else if (action.equalsIgnoreCase(DELETE_ACTION)) {
-            int id = Integer.parseInt(request.getParameter("id"));
+            log.debug("Deleting meal");
+            int id = Integer.parseInt(request.getParameter(ID_PARAM));
             mealRepository.deleteById(id);
-            List<MealTo> mealTos = getMealTos();
-            setUpRequestWithMealsList(request, mealTos);
-            forward = MEALS_LIST_PAGE;
         }
-        request.getRequestDispatcher(forward).forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/meals");
     }
 
     private List<MealTo> getMealTos() {
