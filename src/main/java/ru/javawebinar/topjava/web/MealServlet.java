@@ -47,11 +47,14 @@ public class MealServlet extends HttpServlet {
             setUpRequestAttributes(request);
             forward = MEALS_LIST_PAGE;
         } else if (action.equalsIgnoreCase(EDIT_ACTION)) {
-            log.debug("Editing meals");
-            int id = Integer.parseInt(request.getParameter(ID_PARAM));
-            Optional<Meal> mealById = mealRepository.findById(id);
+            log.debug("Forwarding to edit meal page");
+            String idParam = request.getParameter(ID_PARAM);
+            if (idParam != null && !idParam.isEmpty()) {
+                int id = Integer.parseInt(idParam);
+                Optional<Meal> mealById = mealRepository.findById(id);
+                request.setAttribute("meal", mealById.get());
+            }
             forward = CREATE_EDIT_PAGE;
-            request.setAttribute("meal", mealById.get());
         }
         request.getRequestDispatcher(forward).forward(request, response);
     }
