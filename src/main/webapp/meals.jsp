@@ -25,15 +25,16 @@
         <tr align="left" style="${meal.excess? "color: red":"color: green"}" }>
             <td>
                 <jsp:useBean id="dateTimeFormatter" scope="request" type="java.time.format.DateTimeFormatter"/>
-                <c:out value="${meal.dateTime.format(dateTimeFormatter)}"/></td>
-            <td><c:out value="${meal.description}"/></td>
-            <td><c:out value="${meal.calories}"/></td>
+                    ${meal.dateTime.format(dateTimeFormatter)}
+            </td>
+            <td>${meal.description}</td>
+            <td>${meal.calories}</td>
 
             <td>
-                <a href="meals?action=edit&id=<c:out value="${meal.id}"/>">Update</a>
+                <a href="meals?action=edit&id=${meal.id}">Update</a>
             </td>
             <td>
-                <form action="meals?action=delete&id=<c:out value="${meal.id}"/>" method="post">
+                <form action="meals?action=delete&id=${meal.id}" method="post">
                     <input type="submit" value="Delete"/>
                 </form>
             </td>

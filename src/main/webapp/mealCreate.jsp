@@ -15,29 +15,25 @@
     <table>
         <tr>
             <td>Description :</td>
-            <td align="right">
-                <input style="text-align: right"
-                       type="datetime-local" name="dateTime"
-                       value="<c:out value="${meal.dateTime}"/>"/>
+            <td align="right"><input style="text-align: right" type="datetime-local" name="dateTime"
+                                     value="${meal.dateTime}"/>
             </td>
         </tr>
         <tr>
             <td>Description :</td>
             <td align="right">
-                <input style="text-align: right"
-                       type="text" name="description"
-                       value="<c:out value="${meal.description}"/>"/>
+                <input style="text-align: right" type="text" name="description" value="${meal.description}"/>
             </td>
         </tr>
         <tr>
             <td>Calories :</td>
-            <td align="right"><input style="text-align: right"
-                                     type="text" name="calories"
-                                     value="<c:out value="${meal.calories}"/>"/></td>
+            <td align="right">
+                <input style="text-align: right" type="text" name="calories" value="${meal.calories}"/>
+            </td>
         </tr>
     </table>
     <br>
-    <input type="hidden" name="id" value="<c:out value="${meal.id}"/>"/>
+    <input type="hidden" name="id" value="${meal.id}"/>
     <input type="submit" value="Save"/>
     <button onclick="window.history.back()" type="button">Cancel</button>
 </form>

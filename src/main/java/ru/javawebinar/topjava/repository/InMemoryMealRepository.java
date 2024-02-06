@@ -1,10 +1,7 @@
-package ru.javawebinar.topjava.repository.impl;
+package ru.javawebinar.topjava.repository;
 
 import org.slf4j.Logger;
-import ru.javawebinar.topjava.exception.ExceptionUtils;
-import ru.javawebinar.topjava.exception.MealNotFoundException;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.util.ArrayList;
@@ -16,15 +13,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class MealRepositoryImpl implements MealRepository {
+public class InMemoryMealRepository implements MealRepository {
 
-    private static final Logger log = getLogger(MealRepositoryImpl.class);
+    private static final Logger log = getLogger(InMemoryMealRepository.class);
 
     private final Map<Integer, Meal> storage = new ConcurrentHashMap<>();
 
     private final AtomicInteger idGenerator = new AtomicInteger();
 
-    public MealRepositoryImpl() {
+    public InMemoryMealRepository() {
         MealsUtil.hardCodedMeals().forEach(this::save);
     }
 
@@ -49,12 +46,7 @@ public class MealRepositoryImpl implements MealRepository {
             log.info("Meal with [id: {}] successfully saved in storage", meal.getId());
             return meal;
         } else {
-            if (!storage.containsKey(id)) {
-                String exceptionMessage = String.format(ExceptionUtils.MEAL_NOT_FOUND, id);
-                log.warn(exceptionMessage);
-                throw new MealNotFoundException(exceptionMessage);
-            }
-            Meal saved = storage.put(id, meal);
+            Meal saved = storage.computeIfPresent(id, (k, v) -> meal);
             log.info("Meal with [id: {}] successfully updated", id);
             return saved;
         }
@@ -69,5 +61,4 @@ public class MealRepositoryImpl implements MealRepository {
     private Integer generateNextId() {
         return idGenerator.addAndGet(1);
     }
-
 }
