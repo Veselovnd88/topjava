@@ -59,6 +59,6 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     private Integer generateNextId() {
-        return idGenerator.addAndGet(1);
+        return idGenerator.incrementAndGet();
     }
 }

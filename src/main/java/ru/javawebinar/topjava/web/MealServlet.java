@@ -35,7 +35,12 @@ public class MealServlet extends HttpServlet {
 
     private static final String ID_PARAM = "id";
 
-    private final MealRepository mealRepository = new InMemoryMealRepository();
+    private MealRepository mealRepository;
+
+    @Override
+    public void init() {
+        mealRepository = new InMemoryMealRepository();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -68,7 +73,7 @@ public class MealServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("Processing POST method to /meals");
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter(ACTION);
