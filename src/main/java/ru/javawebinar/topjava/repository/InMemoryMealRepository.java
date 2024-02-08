@@ -39,15 +39,14 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal) {
-        Integer id = meal.getId();
-        if (id == null) {
+        if (meal.isNew()) {
             meal.setId(generateNextId());
             storage.put(meal.getId(), meal);
             log.info("Meal with [id: {}] successfully saved in storage", meal.getId());
             return meal;
         } else {
-            Meal saved = storage.computeIfPresent(id, (k, v) -> meal);
-            log.info("Meal with [id: {}] successfully updated", id);
+            Meal saved = storage.computeIfPresent(meal.getId(), (k, v) -> meal);
+            log.info("Meal with [id: {}] successfully updated", meal.getId());
             return saved;
         }
     }
