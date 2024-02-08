@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.repository.inmemory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.util.Collection;
 import java.util.Map;
@@ -30,17 +31,28 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id) {
+        if (isMealDoesntBelongToUser(repository.get(id))) {
+            return false;
+        }
         return repository.remove(id) != null;
     }
 
     @Override
     public Meal get(int id) {
-        return repository.get(id);
+        Meal meal = repository.get(id);
+        if (isMealDoesntBelongToUser(meal)) {
+            meal = null;
+        }
+        return meal;
     }
 
     @Override
     public Collection<Meal> getAll() {
         return repository.values();
+    }
+
+    private boolean isMealDoesntBelongToUser(Meal meal) {
+        return !meal.getUserId().equals(SecurityUtil.authUserId());
     }
 }
 
