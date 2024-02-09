@@ -30,12 +30,12 @@ public class MealRestController {
         return service.getAll(SecurityUtil.authUserId());
     }
 
-    public MealTo get(int id) {
+    public Meal get(int id) {
         log.info("Get meal with id: {}", id);
         return service.get(id, SecurityUtil.authUserId());
     }
 
-    public MealTo create(Meal meal) {
+    public Meal create(Meal meal) {
         log.info("Create new meal {}", meal);
         checkNew(meal);
         return service.create(meal, SecurityUtil.authUserId());
