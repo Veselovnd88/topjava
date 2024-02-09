@@ -14,7 +14,7 @@ public class InMemoryMealRepositoryTest {
 
     @Test
     public void delete_IfMealIdNull_ReturnFalse() {
-        boolean delete = mealRepository.delete(0);
+        boolean delete = mealRepository.delete(0, 0);
 
         Assertions.assertThat(delete).isFalse();
     }
@@ -22,19 +22,19 @@ public class InMemoryMealRepositoryTest {
     @Test
     public void delete_IfMealDoesntBelongToUser_ReturnFalse() {
         Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, 2);
-        Meal saved = mealRepository.save(meal);
+        Meal saved = mealRepository.save(meal, 2);
 
-        boolean delete = mealRepository.delete(saved.getId());
+        boolean delete = mealRepository.delete(saved.getId(), 1);
 
         Assertions.assertThat(delete).isFalse();
     }
 
     @Test
-    public void delete_IfMealDoesntHaveUserIdToUser_ReturnFalse() {
+    public void delete_IfMealDoesntHaveUserIdTo_ReturnFalse() {
         Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, null);
-        Meal saved = mealRepository.save(meal);
+        Meal saved = mealRepository.save(meal, 1);
 
-        boolean delete = mealRepository.delete(saved.getId());
+        boolean delete = mealRepository.delete(saved.getId(), 1);
 
         Assertions.assertThat(delete).isFalse();
     }
@@ -42,21 +42,22 @@ public class InMemoryMealRepositoryTest {
     @Test
     public void delete_AllOk_ReturnTrue() {
         Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, 1);
-        Meal saved = mealRepository.save(meal);
+        Meal saved = mealRepository.save(meal, 1);
 
-        boolean delete = mealRepository.delete(saved.getId());
+        boolean delete = mealRepository.delete(saved.getId(), 1);
 
         Assertions.assertThat(delete).isTrue();
     }
 
     @Test
     public void getAll_AllOk_ReturnSortedLust() {
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, 1);
-        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, 1);
-        Meal saved = mealRepository.save(meal);
-        Meal saved2 = mealRepository.save(meal2);
+        int userId = 1;
+        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
+        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, userId);
+        Meal saved = mealRepository.save(meal, userId);
+        Meal saved2 = mealRepository.save(meal2, userId);
 
-        List<Meal> allMeals = mealRepository.getAll();
+        List<Meal> allMeals = mealRepository.getAll(userId);
 
         Assertions.assertThat(allMeals).isNotNull().contains(saved, saved2);
         Assertions.assertThat(allMeals.get(0)).extracting(Meal::getId).isEqualTo(saved2.getId());
@@ -65,40 +66,43 @@ public class InMemoryMealRepositoryTest {
 
     @Test
     public void getAll_NotBelongToUser_ReturnSortedLust() {
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, 2);
-        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, 2);
-        mealRepository.save(meal);
-        mealRepository.save(meal2);
+        int userId = 2;
+        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
+        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, userId);
+        mealRepository.save(meal, userId);
+        mealRepository.save(meal2, userId);
 
-        List<Meal> allMeals = mealRepository.getAll();
+        List<Meal> allMeals = mealRepository.getAll(1);
 
         Assertions.assertThat(allMeals).isEmpty();
     }
 
     @Test
     public void save_NotBelongToUser_UpdateAndReturn() {
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, 2);
-        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, 2);
-        Meal saved = mealRepository.save(meal);
-        mealRepository.save(meal2);
+        int userId = 2;
+        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
+        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, userId);
+        Meal saved = mealRepository.save(meal, userId);
+        mealRepository.save(meal2, userId);
         Meal mealForUpdate = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, 3);
         mealForUpdate.setId(saved.getUserId());
 
-        Meal updated = mealRepository.save(mealForUpdate);
+        Meal updated = mealRepository.save(mealForUpdate, 1);
 
         Assertions.assertThat(updated).isNull();
     }
 
     @Test
     public void save_NotBelongToUser_ReturnNull() {
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, 2);
-        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, 2);
-        Meal saved = mealRepository.save(meal);
-        mealRepository.save(meal2);
+        int userId = 2;
+        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
+        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, userId);
+        Meal saved = mealRepository.save(meal, userId);
+        mealRepository.save(meal2, userId);
         Meal mealForUpdate = new Meal(LocalDateTime.now().plusDays(1), "change", 1000, 3);
         mealForUpdate.setId(saved.getUserId());
 
-        Meal updated = mealRepository.save(mealForUpdate);
+        Meal updated = mealRepository.save(mealForUpdate, 1);
 
         Assertions.assertThat(updated).isNull();
         Assertions.assertThat(saved.getDescription()).isEqualTo("desc");
@@ -108,26 +112,27 @@ public class InMemoryMealRepositoryTest {
     public void save_AllOk_UpdateAndReturn() {
         Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, 1);
         Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, 2);
-        Meal saved = mealRepository.save(meal);
-        mealRepository.save(meal2);
+        Meal saved = mealRepository.save(meal, 1);
+        mealRepository.save(meal2, 1);
         Meal mealForUpdate = new Meal(LocalDateTime.now().plusDays(1), "change", 1000, 1);
         mealForUpdate.setId(saved.getId());
 
-        Meal updated = mealRepository.save(mealForUpdate);
+        Meal updated = mealRepository.save(mealForUpdate, 1);
 
         Assertions.assertThat(updated).isNotNull().extracting(Meal::getDescription).isEqualTo("change");
     }
 
     @Test
     public void save_MealDoesntBelongToUser_ReturnNull() {
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, 2);
-        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, 2);
-        Meal saved = mealRepository.save(meal);
-        mealRepository.save(meal2);
-        Meal mealForUpdate = new Meal(LocalDateTime.now().plusDays(1), "change", 1000, 2);
+        int userId = 2;
+        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
+        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, userId);
+        Meal saved = mealRepository.save(meal, 1);
+        mealRepository.save(meal2, 1);
+        Meal mealForUpdate = new Meal(LocalDateTime.now().plusDays(1), "change", 1000, userId);
         mealForUpdate.setId(saved.getId());
 
-        Meal updated = mealRepository.save(mealForUpdate);
+        Meal updated = mealRepository.save(mealForUpdate, 1);
 
         Assertions.assertThat(updated).isNull();
     }
