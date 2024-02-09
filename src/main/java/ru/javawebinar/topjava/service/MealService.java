@@ -11,6 +11,7 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.util.List;
+
 @Service
 public class MealService {
     private static final Logger log = LoggerFactory.getLogger(MealService.class);
@@ -22,10 +23,9 @@ public class MealService {
         this.repository = repository;
     }
 
-    public MealTo create(Meal meal, int userId) {
+    public Meal create(Meal meal, int userId) {
         log.info("Saving meal");
-        Meal savedMeal = repository.save(meal, userId);
-        return MealsUtil.createTo(savedMeal, savedMeal.getCalories() > MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return repository.save(meal, userId);
     }
 
     public void delete(int id, int userId) {
@@ -33,10 +33,9 @@ public class MealService {
         ValidationUtil.checkNotFoundWithId(repository.delete(id, userId), id);
     }
 
-    public MealTo get(int id, int userId) {
+    public Meal get(int id, int userId) {
         log.info("Retrieving meal from repository");
-        Meal meal = ValidationUtil.checkNotFoundWithId(repository.get(id, userId), id);
-        return MealsUtil.createTo(meal, meal.getCalories() > MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return ValidationUtil.checkNotFoundWithId(repository.get(id, userId), id);
     }
 
     public List<MealTo> getAll(int userId) {
