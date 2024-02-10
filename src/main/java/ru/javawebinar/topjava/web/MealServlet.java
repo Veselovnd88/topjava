@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletException;
@@ -12,8 +14,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Objects;
 
 public class MealServlet extends HttpServlet {
@@ -72,7 +77,17 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 log.info("getAll");
-                request.setAttribute(MEALS, controller.getAll());
+                String dtFrom = request.getParameter("dateTimeFrom");
+                String dtTo = request.getParameter("dateTimeTo");
+                String timeFrom = request.getParameter("timeFrom");
+                String timeTo = request.getParameter("timeTo");
+                List<MealTo> meals = controller.getAll(
+                        !ValidationUtil.checkNullOrEmptyParam(dtFrom) ? LocalDate.MIN : LocalDate.parse(dtFrom),
+                        !ValidationUtil.checkNullOrEmptyParam(dtTo) ? LocalDate.MAX : LocalDate.parse(dtFrom),
+                        !ValidationUtil.checkNullOrEmptyParam(timeFrom) ? LocalTime.MIN : LocalTime.parse(timeFrom),
+                        !ValidationUtil.checkNullOrEmptyParam(timeTo) ? LocalTime.MAX : LocalTime.parse(timeTo)
+                );
+                request.setAttribute(MEALS, meals);
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

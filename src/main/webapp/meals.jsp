@@ -14,6 +14,23 @@
         .excess {
             color: red;
         }
+
+        dl {
+            background: none repeat scroll 0 0 #FAFAFA;
+            margin: 8px 0;
+            padding: 0;
+        }
+
+        dt {
+            display: inline-block;
+            width: 180px;
+        }
+
+        dd {
+            display: inline-block;
+            margin-left: 8px;
+            vertical-align: top;
+        }
     </style>
 </head>
 <body>
@@ -23,6 +40,26 @@
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
+    <p>Here we can set filters</p>
+    <form method="get" action="meals">
+        <dl>
+            <dt>Date from:</dt>
+            <dd><input type="date" style="width: 150px" name="dateTimeFrom"></dd>
+        </dl>
+        <dl>
+            <dt>Date to:</dt>
+            <dd><input type="date" style="width: 150px" name="dateTimeTo"></dd>
+        </dl>
+        <dl>
+            <dt>Time from:</dt>
+            <dd><input type="time" style="width: 150px" name="timeFrom"></dd>
+        </dl>
+        <dl>
+            <dt>Time to:</dt>
+            <dd><input type="time" style="width: 150px" name="timeTo"></dd>
+        </dl>
+        <button type="submit">Filter</button>
+    </form>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>

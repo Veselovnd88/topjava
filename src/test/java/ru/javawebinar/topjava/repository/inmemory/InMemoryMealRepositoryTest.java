@@ -5,6 +5,7 @@ import org.junit.Test;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -50,14 +51,14 @@ public class InMemoryMealRepositoryTest {
     }
 
     @Test
-    public void getAll_AllOk_ReturnSortedLust() {
+    public void getAll_AllOk_ReturnSortedList() {
         int userId = 1;
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
-        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, userId);
+        Meal meal = new Meal(LocalDateTime.now().minusDays(1), "desc", 1000, userId);
+        Meal meal2 = new Meal(LocalDateTime.now(), "desc", 1000, userId);
         Meal saved = mealRepository.save(meal, userId);
         Meal saved2 = mealRepository.save(meal2, userId);
 
-        List<Meal> allMeals = mealRepository.getAll(userId);
+        List<Meal> allMeals = mealRepository.getAll(userId, LocalDate.MIN, LocalDate.MAX);
 
         Assertions.assertThat(allMeals).isNotNull().contains(saved, saved2);
         Assertions.assertThat(allMeals.get(0)).extracting(Meal::getId).isEqualTo(saved2.getId());
@@ -65,14 +66,14 @@ public class InMemoryMealRepositoryTest {
     }
 
     @Test
-    public void getAll_NotBelongToUser_ReturnSortedLust() {
+    public void getAll_NotBelongToUser_ReturnSortedList() {
         int userId = 2;
         Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
         Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, userId);
         mealRepository.save(meal, userId);
         mealRepository.save(meal2, userId);
 
-        List<Meal> allMeals = mealRepository.getAll(1);
+        List<Meal> allMeals = mealRepository.getAll(1, LocalDate.MIN, LocalDate.MAX);
 
         Assertions.assertThat(allMeals).isEmpty();
     }

@@ -6,10 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -38,10 +37,9 @@ public class MealService {
         return ValidationUtil.checkNotFoundWithId(repository.get(id, userId), id);
     }
 
-    public List<MealTo> getAll(int userId) {
+    public List<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate) {
         log.info("Retrieving all meals from repository");
-        List<Meal> meals = repository.getAll(userId);
-        return MealsUtil.getTos(meals, MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return repository.getAll(userId, startDate, endDate);
     }
 
     public void update(Meal meal, int userId) {
