@@ -42,6 +42,7 @@
     <br><br>
     <p>Here we can set filters</p>
     <form method="get" action="meals">
+        <input type="hidden" name="action" value="filter">
         <dl>
             <dt>Date from:</dt>
             <dd><input type="date" style="width: 150px" name="dateTimeFrom"></dd>

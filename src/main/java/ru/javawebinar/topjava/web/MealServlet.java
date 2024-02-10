@@ -74,14 +74,13 @@ public class MealServlet extends HttpServlet {
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
-            case "all":
-            default:
-                log.info("getAll");
+            case "filter":
+                log.info("get all filtered");
                 String dtFrom = request.getParameter("dateTimeFrom");
                 String dtTo = request.getParameter("dateTimeTo");
                 String timeFrom = request.getParameter("timeFrom");
                 String timeTo = request.getParameter("timeTo");
-                List<MealTo> meals = controller.getAll(
+                List<MealTo> meals = controller.getAllFiltered(
                         !ValidationUtil.checkNullOrEmptyParam(dtFrom) ? LocalDate.MIN : LocalDate.parse(dtFrom),
                         !ValidationUtil.checkNullOrEmptyParam(dtTo) ? LocalDate.MAX : LocalDate.parse(dtFrom),
                         !ValidationUtil.checkNullOrEmptyParam(timeFrom) ? LocalTime.MIN : LocalTime.parse(timeFrom),
@@ -90,11 +89,22 @@ public class MealServlet extends HttpServlet {
                 request.setAttribute(MEALS, meals);
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
+            case "all":
+            default:
+                log.info("getAll");
+                request.setAttribute(MEALS, controller.getAll());
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
+                break;
         }
     }
 
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.parseInt(paramId);
+    }
+
+    @Override
+    public void destroy() {
+        appCtx.close();
     }
 }
