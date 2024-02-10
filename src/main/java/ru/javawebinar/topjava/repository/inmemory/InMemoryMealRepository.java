@@ -5,6 +5,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -30,10 +31,14 @@ public class InMemoryMealRepository implements MealRepository {
             repository.put(meal.getId(), meal);
             return meal;
         }
-        if (isMealBelongsToUser(meal, userId)) {
-            // handle case: update, but not present in storage
-            return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
-        } else return null;
+        // handle case: update, but not present in storage
+        return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> {
+            if (isMealBelongsToUser(oldMeal, userId)) {
+                return meal;
+            } else {
+                throw new NotFoundException(String.format("Not meal of user : %s", userId));
+            }
+        });
     }
 
     @Override
@@ -58,7 +63,7 @@ public class InMemoryMealRepository implements MealRepository {
         return repository.values().stream()
                 .filter(m -> isMealBelongsToUser(m, userId)
                         && DateTimeUtil.isBetweenHalfOpen(m.getDate(), startDate, endDate))
-                .sorted(Comparator.comparing(Meal::getDate, Comparator.reverseOrder()))
+                .sorted(Comparator.comparing(Meal::getDateTime, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
     }
 
