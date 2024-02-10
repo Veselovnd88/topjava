@@ -43,19 +43,14 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        if (!isMealBelongsToUser(repository.get(id), userId)) {
-            return false;
-        }
-        return repository.remove(id) != null;
+        Meal meal = repository.get(id);
+        return isMealBelongsToUser(meal, userId) && (repository.remove(id) != null);
     }
 
     @Override
     public Meal get(int id, int userId) {
         Meal meal = repository.get(id);
-        if (!isMealBelongsToUser(meal, userId)) {
-            meal = null;
-        }
-        return meal;
+        return !isMealBelongsToUser(meal, userId) ? null : meal;
     }
 
     @Override

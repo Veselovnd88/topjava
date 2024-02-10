@@ -31,7 +31,7 @@ public class InMemoryUserRepositoryTest {
     }
 
     @Test
-    public void getByAll_IfTwoUsers_ReturnSortedList() {
+    public void getAll_IfTwoUsers_ReturnSortedList() {
         userRepository.save(new User(null, "a", "email@email.com", "strongpass", Role.ADMIN));
         userRepository.save(new User(null, "b", "not@email.com", "strongpass", Role.ADMIN));
 
@@ -40,5 +40,17 @@ public class InMemoryUserRepositoryTest {
         Assertions.assertThat(allUsers).hasSize(2);
         Assertions.assertThat(allUsers.get(0)).extracting(User::getName).isEqualTo("a");
         Assertions.assertThat(allUsers.get(1)).extracting(User::getName).isEqualTo("b");
+    }
+
+    @Test
+    public void getAll_UserWithSameNames_ReturnSortedList() {
+        userRepository.save(new User(null, "a", "email@email.com", "strongpass", Role.ADMIN));
+        userRepository.save(new User(null, "a", "not@email.com", "strongpass", Role.ADMIN));
+
+        List<User> allUsers = userRepository.getAll();
+
+        Assertions.assertThat(allUsers).hasSize(2);
+        Assertions.assertThat(allUsers.get(0)).extracting(User::getId).isEqualTo(1);
+        Assertions.assertThat(allUsers.get(1)).extracting(User::getId).isEqualTo(2);
     }
 }
