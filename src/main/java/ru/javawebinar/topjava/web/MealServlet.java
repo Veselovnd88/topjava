@@ -25,7 +25,7 @@ public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
     private static final String MEALS = "meals";
 
-    ConfigurableApplicationContext appCtx;
+    private ConfigurableApplicationContext appCtx;
 
     private MealRestController controller;
 
@@ -81,10 +81,10 @@ public class MealServlet extends HttpServlet {
                 String timeFrom = request.getParameter("timeFrom");
                 String timeTo = request.getParameter("timeTo");
                 List<MealTo> meals = controller.getAllFiltered(
-                        !ValidationUtil.checkNullOrEmptyParam(dtFrom) ? LocalDate.MIN : LocalDate.parse(dtFrom),
-                        !ValidationUtil.checkNullOrEmptyParam(dtTo) ? LocalDate.MAX : LocalDate.parse(dtFrom),
-                        !ValidationUtil.checkNullOrEmptyParam(timeFrom) ? LocalTime.MIN : LocalTime.parse(timeFrom),
-                        !ValidationUtil.checkNullOrEmptyParam(timeTo) ? LocalTime.MAX : LocalTime.parse(timeTo)
+                        !ValidationUtil.checkNullOrEmptyParam(dtFrom) ? null : LocalDate.parse(dtFrom),
+                        !ValidationUtil.checkNullOrEmptyParam(dtTo) ? null : LocalDate.parse(dtFrom),
+                        !ValidationUtil.checkNullOrEmptyParam(timeFrom) ? null : LocalTime.parse(timeFrom),
+                        !ValidationUtil.checkNullOrEmptyParam(timeTo) ? null : LocalTime.parse(timeTo)
                 );
                 request.setAttribute(MEALS, meals);
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);

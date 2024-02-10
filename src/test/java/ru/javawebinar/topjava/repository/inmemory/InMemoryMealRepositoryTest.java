@@ -6,7 +6,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,7 +58,7 @@ public class InMemoryMealRepositoryTest {
         Meal saved = mealRepository.save(meal, userId);
         Meal saved2 = mealRepository.save(meal2, userId);
 
-        List<Meal> allMeals = mealRepository.getAll(userId, LocalDate.MIN, LocalDate.MAX);
+        List<Meal> allMeals = mealRepository.getAll(userId);
 
         Assertions.assertThat(allMeals).isNotNull().contains(saved, saved2);
         Assertions.assertThat(allMeals.get(0)).extracting(Meal::getId).isEqualTo(saved2.getId());
@@ -75,7 +74,7 @@ public class InMemoryMealRepositoryTest {
         mealRepository.save(meal, userId);
         mealRepository.save(meal2, userId);
 
-        List<Meal> allMeals = mealRepository.getAll(anotherUserId, LocalDate.MIN, LocalDate.MAX);
+        List<Meal> allMeals = mealRepository.getAll(anotherUserId);
 
         Assertions.assertThat(allMeals).isEmpty();
     }

@@ -40,10 +40,16 @@ public class MealService {
         return ValidationUtil.checkNotFoundWithId(repository.get(id, userId), id);
     }
 
-    public List<MealTo> getAll(int userId, int calories, LocalDate startDate, LocalDate endDate,
-                               LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getAll(int userId, int calories) {
         log.info("Retrieving all meals from repository");
-        List<Meal> meals = repository.getAll(userId, startDate, endDate);
+        List<Meal> meals = repository.getAll(userId);
+        return MealsUtil.getTos(meals, calories);
+    }
+
+    public List<MealTo> getAllFiltered(int userId, int calories, LocalDate startDate, LocalDate endDate,
+                                       LocalTime startTime, LocalTime endTime) {
+        log.info("Retrieving all meals from repository with filter options");
+        List<Meal> meals = repository.getAllFiltered(userId, startDate, endDate);
         return MealsUtil.getFilteredTos(meals, calories, startTime, endTime);
     }
 
