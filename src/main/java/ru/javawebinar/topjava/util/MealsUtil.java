@@ -25,7 +25,7 @@ public class MealsUtil {
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000, 1),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500, 1),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410, 1),
-            new Meal(LocalDateTime.now(), "asdf", 100, 3)
+            new Meal(LocalDateTime.now().minusDays(5), "asdf", 100, 3)
     );
 
     private MealsUtil() {

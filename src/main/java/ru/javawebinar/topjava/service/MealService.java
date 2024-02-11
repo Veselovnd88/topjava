@@ -53,8 +53,9 @@ public class MealService {
         return MealsUtil.getFilteredTos(meals, calories, startTime, endTime);
     }
 
-    public void update(Meal meal, int userId) {
+    public void update(Meal meal, int mealId, int userId) {
         log.info("Updating meal with id: {}", meal.getId());
-        ValidationUtil.checkNotFoundWithId(repository.save(meal, userId), meal.getId());
+        meal.setId(mealId);
+        ValidationUtil.checkNotFoundWithId(repository.save(meal, userId), mealId);
     }
 }
