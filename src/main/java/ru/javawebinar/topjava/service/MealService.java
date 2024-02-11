@@ -11,6 +11,7 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -49,7 +50,9 @@ public class MealService {
     public List<MealTo> getAllFiltered(int userId, int calories, LocalDate startDate, LocalDate endDate,
                                        LocalTime startTime, LocalTime endTime) {
         log.info("Retrieving all meals from repository with filter options");
-        List<Meal> meals = repository.getAllFiltered(userId, startDate, endDate);
+        LocalDateTime dateFrom = LocalDateTime.of(startDate, LocalTime.MIN);
+        LocalDateTime dateTo = LocalDateTime.of(endDate, LocalTime.MAX);
+        List<Meal> meals = repository.getAllFiltered(userId, dateFrom, dateTo);
         return MealsUtil.getFilteredTos(meals, calories, startTime, endTime);
     }
 

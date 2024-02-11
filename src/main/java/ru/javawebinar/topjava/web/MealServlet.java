@@ -82,7 +82,7 @@ public class MealServlet extends HttpServlet {
                 String timeTo = request.getParameter("timeTo");
                 List<MealTo> meals = controller.getAllFiltered(
                         !ValidationUtil.checkNullOrEmptyParam(dtFrom) ? null : LocalDate.parse(dtFrom),
-                        !ValidationUtil.checkNullOrEmptyParam(dtTo) ? null : LocalDate.parse(dtFrom),
+                        !ValidationUtil.checkNullOrEmptyParam(dtTo) ? null : LocalDate.parse(dtTo),
                         !ValidationUtil.checkNullOrEmptyParam(timeFrom) ? null : LocalTime.parse(timeFrom),
                         !ValidationUtil.checkNullOrEmptyParam(timeTo) ? null : LocalTime.parse(timeTo)
                 );

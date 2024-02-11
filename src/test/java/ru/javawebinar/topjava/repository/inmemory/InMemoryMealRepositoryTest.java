@@ -5,7 +5,6 @@ import org.junit.Test;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -124,8 +123,8 @@ public class InMemoryMealRepositoryTest {
         mealRepository.save(meal, userId);
         Meal saved2 = mealRepository.save(meal2, userId);
 
-        List<Meal> allMeals = mealRepository.getAllFiltered(userId, LocalDate.now().minusDays(1),
-                LocalDate.now().plusDays(2));
+        List<Meal> allMeals = mealRepository.getAllFiltered(userId, LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(2));
 
         Assertions.assertThat(allMeals).isNotNull().hasSize(1).contains(saved2);
         Assertions.assertThat(allMeals.get(0)).extracting(Meal::getId).isEqualTo(saved2.getId());
