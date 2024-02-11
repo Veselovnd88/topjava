@@ -7,6 +7,7 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -23,6 +24,8 @@ public class InMemoryMealRepository implements MealRepository {
 
     {
         MealsUtil.meals.forEach(m -> this.save(m, 1));
+        this.save(new Meal(LocalDateTime.now().minusDays(5), "asdf", 100, 3), 3);
+        this.save(new Meal(LocalDateTime.now().minusDays(5), "asdf", 100, 3), 2);
     }
 
     @Override
