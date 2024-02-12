@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
@@ -32,7 +33,7 @@ public class MealRestController {
         log.info("Get all user meals filtered");
         return service.getAllFiltered(SecurityUtil.authUserId(), SecurityUtil.authUserCaloriesPerDay(),
                 startDate == null ? LocalDateTime.MIN : startDate.atStartOfDay(),
-                endDate == null ? LocalDateTime.MAX : endDate.plusDays(1).atStartOfDay(),
+                DateTimeUtil.mapLocalDateToDateWithRightBorder(endDate),
                 startTime == null ? LocalTime.MIN : startTime,
                 endTime == null ? LocalTime.MAX : endTime);
     }

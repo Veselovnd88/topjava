@@ -43,7 +43,6 @@ public class InMemoryMealRepositoryTest {
     @Test
     public void save_AllOk_UpdateAndReturn() {
         int userId = 5;
-        int anotherUserId = 10;
         Meal meal = new Meal(LocalDateTime.now(), "desc", 1000);
         Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000);
         Meal saved = mealRepository.save(meal, userId);
@@ -128,5 +127,16 @@ public class InMemoryMealRepositoryTest {
 
         Assertions.assertThat(allMeals).isNotNull().hasSize(1).contains(saved2);
         Assertions.assertThat(allMeals.get(0)).extracting(Meal::getId).isEqualTo(saved2.getId());
+    }
+
+    @Test
+    public void getAllFiltered_MealWithMaxLocalDate_ReturnSortedList() {
+        int userId = 1;
+        Meal meal = new Meal(LocalDateTime.MAX.minusNanos(1), "desc", 1000);
+        mealRepository.save(meal, userId);
+
+        List<Meal> allMeals = mealRepository.getAllFiltered(userId, LocalDateTime.MAX.minusDays(1),
+                LocalDateTime.MAX);
+        Assertions.assertThat(allMeals).hasSize(1);
     }
 }
