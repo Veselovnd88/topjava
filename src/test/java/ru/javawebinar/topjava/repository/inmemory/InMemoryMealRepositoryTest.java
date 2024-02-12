@@ -15,7 +15,7 @@ public class InMemoryMealRepositoryTest {
     @Test
     public void save_NoUserAndHisMealsInRepo() {
         int userId = 5;
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
+        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000);
 
         Meal saved = mealRepository.save(meal, userId);
 
@@ -26,17 +26,17 @@ public class InMemoryMealRepositoryTest {
     public void save_NotBelongToUser_UpdateAndReturn() {
         int userId = 5;
         int anotherUserId = 10;
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
-        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, userId);
+        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000);
+        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000);
         Meal saved = mealRepository.save(meal, userId);
         mealRepository.save(meal2, userId);
-        Meal mealForUpdate = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, anotherUserId);
+        Meal mealForUpdate = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000);
         mealForUpdate.setId(saved.getId());
 
         Meal updatedMeal = mealRepository.save(mealForUpdate, anotherUserId);
 
         Assertions.assertThat(updatedMeal).isNull();
-        Meal userMeal = mealRepository.get(saved.getId(), saved.getUserId());
+        Meal userMeal = mealRepository.get(saved.getId(), userId);
         Assertions.assertThat(userMeal).isNotNull();
     }
 
@@ -44,11 +44,11 @@ public class InMemoryMealRepositoryTest {
     public void save_AllOk_UpdateAndReturn() {
         int userId = 5;
         int anotherUserId = 10;
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
-        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, anotherUserId);
+        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000);
+        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000);
         Meal saved = mealRepository.save(meal, userId);
         mealRepository.save(meal2, userId);
-        Meal mealForUpdate = new Meal(LocalDateTime.now().plusDays(1), "change", 1000, userId);
+        Meal mealForUpdate = new Meal(LocalDateTime.now().plusDays(1), "change", 1000);
         mealForUpdate.setId(saved.getId());
 
         Meal updated = mealRepository.save(mealForUpdate, userId);
@@ -67,7 +67,7 @@ public class InMemoryMealRepositoryTest {
     public void delete_IfMealDoesntBelongToUser_ReturnFalse() {
         int userId = 5;
         int anotherUserId = 10;
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
+        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000);
         Meal saved = mealRepository.save(meal, userId);
 
         boolean delete = mealRepository.delete(saved.getId(), anotherUserId);
@@ -78,7 +78,7 @@ public class InMemoryMealRepositoryTest {
     @Test
     public void delete_AllOk_ReturnTrue() {
         int userId = 1;
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
+        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000);
         Meal saved = mealRepository.save(meal, userId);
 
         boolean delete = mealRepository.delete(saved.getId(), userId);
@@ -89,8 +89,8 @@ public class InMemoryMealRepositoryTest {
     @Test
     public void getAll_AllOk_ReturnSortedList() {
         int userId = 1;
-        Meal meal = new Meal(LocalDateTime.now().minusDays(1), "desc", 1000, userId);
-        Meal meal2 = new Meal(LocalDateTime.now(), "desc", 1000, userId);
+        Meal meal = new Meal(LocalDateTime.now().minusDays(1), "desc", 1000);
+        Meal meal2 = new Meal(LocalDateTime.now(), "desc", 1000);
         Meal saved = mealRepository.save(meal, userId);
         Meal saved2 = mealRepository.save(meal2, userId);
 
@@ -105,8 +105,8 @@ public class InMemoryMealRepositoryTest {
     public void getAll_NotBelongToUser_ReturnEmptyList() {
         int userId = 5;
         int anotherUserId = 10;
-        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000, userId);
-        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000, userId);
+        Meal meal = new Meal(LocalDateTime.now(), "desc", 1000);
+        Meal meal2 = new Meal(LocalDateTime.now().plusDays(1), "desc", 1000);
         mealRepository.save(meal, userId);
         mealRepository.save(meal2, userId);
 
@@ -118,8 +118,8 @@ public class InMemoryMealRepositoryTest {
     @Test
     public void getAllFiltered_AllOk_ReturnSortedList() {
         int userId = 1;
-        Meal meal = new Meal(LocalDateTime.now().minusDays(2), "desc", 1000, userId);
-        Meal meal2 = new Meal(LocalDateTime.now(), "desc", 1000, userId);
+        Meal meal = new Meal(LocalDateTime.now().minusDays(2), "desc", 1000);
+        Meal meal2 = new Meal(LocalDateTime.now(), "desc", 1000);
         mealRepository.save(meal, userId);
         Meal saved2 = mealRepository.save(meal2, userId);
 

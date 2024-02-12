@@ -23,28 +23,20 @@ public class InMemoryMealRepository implements MealRepository {
 
     {
         MealsUtil.meals.forEach(m -> this.save(m, 1));
-        this.save(new Meal(LocalDateTime.now().minusDays(5), "user3 Meal", 100, 3), 3);
-        this.save(new Meal(LocalDateTime.now().minusDays(5), "user2 Meal", 100, 3), 2);
+        this.save(new Meal(LocalDateTime.now().minusDays(5), "user3 Meal", 100), 3);
+        this.save(new Meal(LocalDateTime.now().minusDays(5), "user2 Meal", 100), 2);
     }
 
     @Override
     public Meal save(Meal meal, int userId) {
         Map<Integer, Meal> userMealMap = repository.computeIfAbsent(userId, id -> new ConcurrentHashMap<>());
-        meal.setUserId(userId);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            userMealMap.putIfAbsent(meal.getId(), meal);
-            repository.putIfAbsent(userId, userMealMap);
+            userMealMap.put(meal.getId(), meal);
             return meal;
         }
         // handle case: update, but not present in storage
-        else {
-            if (!userMealMap.containsKey(meal.getId())) {
-                return null;
-            } else {
-                return userMealMap.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
-            }
-        }
+        return userMealMap.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override

@@ -51,14 +51,13 @@ public class MealService {
                                        LocalTime startTime, LocalTime endTime) {
         log.info("Retrieving all meals from repository with filter options");
         LocalDateTime dateFrom = LocalDateTime.of(startDate, LocalTime.MIN);
-        LocalDateTime dateTo = LocalDateTime.of(endDate, LocalTime.MAX);
+        LocalDateTime dateTo = LocalDateTime.of(endDate.plusDays(1), LocalTime.MIN);
         List<Meal> meals = repository.getAllFiltered(userId, dateFrom, dateTo);
         return MealsUtil.getFilteredTos(meals, calories, startTime, endTime);
     }
 
-    public void update(Meal meal, int mealId, int userId) {
+    public void update(Meal meal, int userId) {
         log.info("Updating meal with id: {}", meal.getId());
-        meal.setId(mealId);
-        ValidationUtil.checkNotFoundWithId(repository.save(meal, userId), mealId);
+        ValidationUtil.checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 }
