@@ -11,6 +11,10 @@ public class DateTimeUtil {
         return source.compareTo(left) >= 0 && source.compareTo(right) < 0;
     }
 
+    public static <T extends Comparable<T>> boolean isBetweenInclusive(T source, T left, T right) {
+        return source.compareTo(left) >= 0 && source.compareTo(right) <= 0;
+    }
+
     public static LocalDateTime mapLocalDateToDateWithRightBorder(LocalDate localDate) {
         if (localDate == null || localDate.equals(LocalDate.MAX)) {
             return LocalDateTime.MAX;

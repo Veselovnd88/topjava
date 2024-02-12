@@ -130,9 +130,20 @@ public class InMemoryMealRepositoryTest {
     }
 
     @Test
-    public void getAllFiltered_MealWithMaxLocalDate_ReturnSortedList() {
+    public void getAllFiltered_MealWithNotAlmostMaxLocalDate_ReturnSortedList() {
         int userId = 1;
         Meal meal = new Meal(LocalDateTime.MAX.minusNanos(1), "desc", 1000);
+        mealRepository.save(meal, userId);
+
+        List<Meal> allMeals = mealRepository.getAllFiltered(userId, LocalDateTime.MAX.minusDays(1),
+                LocalDateTime.MAX);
+        Assertions.assertThat(allMeals).hasSize(1);
+    }
+
+    @Test
+    public void getAllFiltered_MealWithMaxLocalDate_ReturnSortedList() {
+        int userId = 1;
+        Meal meal = new Meal(LocalDateTime.MAX, "desc", 1000);
         mealRepository.save(meal, userId);
 
         List<Meal> allMeals = mealRepository.getAllFiltered(userId, LocalDateTime.MAX.minusDays(1),
