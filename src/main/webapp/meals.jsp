@@ -45,19 +45,19 @@
         <input type="hidden" name="action" value="filter">
         <dl>
             <dt>Date from:</dt>
-            <dd><input type="date" style="width: 150px" name="dateTimeFrom"></dd>
+            <dd><input type="date" style="width: 150px" value="${param.dateTimeFrom}" name="dateTimeFrom"></dd>
         </dl>
         <dl>
             <dt>Date to:</dt>
-            <dd><input type="date" style="width: 150px" name="dateTimeTo"></dd>
+            <dd><input type="date" style="width: 150px" value="${param.dateTimeTo}" name="dateTimeTo"></dd>
         </dl>
         <dl>
             <dt>Time from:</dt>
-            <dd><input type="time" style="width: 150px" name="timeFrom"></dd>
+            <dd><input type="time" style="width: 150px" value="${param.timeFrom}" name="timeFrom"></dd>
         </dl>
         <dl>
             <dt>Time to:</dt>
-            <dd><input type="time" style="width: 150px" name="timeTo"></dd>
+            <dd><input type="time" style="width: 150px" value="${param.timeTo}" name="timeTo"></dd>
         </dl>
         <button type="submit">Filter</button>
     </form>
