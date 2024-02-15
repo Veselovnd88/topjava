@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+
+  topjava-pg:
+    image: "postgres:16"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: topjava
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5439:5432"
