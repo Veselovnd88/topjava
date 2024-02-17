@@ -6,6 +6,8 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class MealTestData {
 
@@ -13,24 +15,18 @@ public class MealTestData {
 
     public static final int ADMIN_MEAL_ID = AbstractBaseEntity.START_SEQ + 10;
 
-    public static final int GUEST_MEAL_ID = AbstractBaseEntity.START_SEQ + 17;
-
     public static final int NOT_FOUND_MEAL_ID = AbstractBaseEntity.START_SEQ + 100;
 
-    public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2024, 2, 14, 10, 0, 6);
+    public static final Meal userMeal = new Meal(USER_MEAL_ID, LocalDateTime.of(2024, 2, 14, 10, 0, 6), "user meal breakFast", 500);
 
-    public static final Meal userMeal = new Meal(USER_MEAL_ID, LOCAL_DATE_TIME, "user meal breakFast", 500);
+    public static final Meal adminMeal = new Meal(ADMIN_MEAL_ID, LocalDateTime.of(2024, 2, 14, 10, 0, 6), "admin meal breakFast", 500);
 
-    public static final Meal adminMeal = new Meal(ADMIN_MEAL_ID, LOCAL_DATE_TIME, "admin meal breakFast", 500);
-
-    public static final Meal guestMeal = new Meal(GUEST_MEAL_ID, LOCAL_DATE_TIME, "guest meal breakFast", 500);
-
-    public static Meal getNewUserMeal(int userId) {
-        return new Meal(null, LOCAL_DATE_TIME.minusWeeks(1), "user's " + userId + " meal", 100);
+    public static Meal getNewUserMeal() {
+        return new Meal(null, LocalDateTime.of(2024, 2, 7, 10, 0, 6), "user's meal", 100);
     }
 
-    public static Meal getUpdatedUserMeal(int id, int userId, String updatedDesc) {
-        Meal meal = getNewUserMeal(userId);
+    public static Meal getUpdatedUserMeal(int id, String updatedDesc) {
+        Meal meal = getNewUserMeal();
         meal.setId(id);
         meal.setDescription(updatedDesc);
         return meal;
@@ -46,5 +42,10 @@ public class MealTestData {
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
         Assertions.assertThat(actual).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
+    }
+
+    public static void checkMealsListWithSizeContainsSorting(List<Meal> actual, int size, Meal... expected) {
+        Assertions.assertThat(actual).hasSize(size).contains(expected)
+                .isSortedAccordingTo(Comparator.comparing(Meal::getDateTime).reversed());
     }
 }
