@@ -15,6 +15,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.MealTestData;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import java.util.Comparator;
 import java.util.List;
 
 @ContextConfiguration({
@@ -58,23 +59,17 @@ public class MealServiceTest {
 
     @Test
     public void get_ForExistingUserMeal_ReturnCorrectMeal() {
-        Meal foundMeal = mealService.get(MealTestData.USER_MEAL_ID, UserTestData.USER_ID);
-
-        MealTestData.assertMatch(foundMeal, MealTestData.userMeal);
+        checkGetMealByIdAndUserId(MealTestData.USER_MEAL_ID, UserTestData.USER_ID, MealTestData.userMeal);
     }
 
     @Test
     public void get_ForExistingAdminMeal_ReturnCorrectMeal() {
-        Meal foundMeal = mealService.get(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID);
-
-        MealTestData.assertMatch(foundMeal, MealTestData.adminMeal);
+        checkGetMealByIdAndUserId(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID, MealTestData.adminMeal);
     }
 
     @Test
     public void get_ForExistingGuestMeal_ReturnCorrectMeal() {
-        Meal foundMeal = mealService.get(MealTestData.GUEST_MEAL_ID, UserTestData.GUEST_ID);
-
-        MealTestData.assertMatch(foundMeal, MealTestData.guestMeal);
+        checkGetMealByIdAndUserId(MealTestData.GUEST_MEAL_ID, UserTestData.GUEST_ID, MealTestData.guestMeal);
     }
 
     @Test
@@ -93,29 +88,17 @@ public class MealServiceTest {
 
     @Test
     public void delete_AllOkForUser_Delete() {
-        mealService.delete(MealTestData.USER_MEAL_ID, UserTestData.USER_ID);
-
-        Assertions.assertThatExceptionOfType(NotFoundException.class)
-                .isThrownBy(() -> mealService.get(MealTestData.USER_MEAL_ID, UserTestData.USER_ID))
-                .withMessage("Not found entity with id=" + MealTestData.USER_MEAL_ID);
+        checkDeleteMealByIdAndUserId(MealTestData.USER_MEAL_ID, UserTestData.USER_ID);
     }
 
     @Test
     public void delete_AllOkForAdmin_Delete() {
-        mealService.delete(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID);
-
-        Assertions.assertThatExceptionOfType(NotFoundException.class)
-                .isThrownBy(() -> mealService.get(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID))
-                .withMessage("Not found entity with id=" + MealTestData.ADMIN_MEAL_ID);
+        checkDeleteMealByIdAndUserId(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID);
     }
 
     @Test
     public void delete_AllOkForGuest_Delete() {
-        mealService.delete(MealTestData.GUEST_MEAL_ID, UserTestData.GUEST_ID);
-
-        Assertions.assertThatExceptionOfType(NotFoundException.class)
-                .isThrownBy(() -> mealService.get(MealTestData.GUEST_MEAL_ID, UserTestData.GUEST_ID))
-                .withMessage("Not found entity with id=" + MealTestData.GUEST_MEAL_ID);
+        checkDeleteMealByIdAndUserId(MealTestData.GUEST_MEAL_ID, UserTestData.GUEST_ID);
     }
 
     @Test
@@ -134,32 +117,17 @@ public class MealServiceTest {
 
     @Test
     public void update_AllOkForUser_UpdateUserMeal() {
-        Meal mealToUpdate = MealTestData.getUpdatedUserMeal(MealTestData.USER_MEAL_ID, UserTestData.USER_ID, "updated");
-
-        mealService.update(mealToUpdate, UserTestData.USER_ID);
-
-        Meal updatedMeal = mealService.get(MealTestData.USER_MEAL_ID, UserTestData.USER_ID);
-        MealTestData.assertMatch(updatedMeal, mealToUpdate);
+        checkUpdateMealByIdAndUserId(MealTestData.USER_MEAL_ID, UserTestData.USER_ID);
     }
 
     @Test
     public void update_AllOkForAdmin_UpdateAdminMeal() {
-        Meal mealToUpdate = MealTestData.getUpdatedUserMeal(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID, "updated");
-
-        mealService.update(mealToUpdate, UserTestData.ADMIN_ID);
-
-        Meal updatedMeal = mealService.get(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID);
-        MealTestData.assertMatch(updatedMeal, mealToUpdate);
+        checkUpdateMealByIdAndUserId(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID);
     }
 
     @Test
     public void update_AllOkForGuest_UpdateGuestMeal() {
-        Meal mealToUpdate = MealTestData.getUpdatedUserMeal(MealTestData.GUEST_MEAL_ID, UserTestData.GUEST_ID, "updated");
-
-        mealService.update(mealToUpdate, UserTestData.GUEST_ID);
-
-        Meal updatedMeal = mealService.get(MealTestData.GUEST_MEAL_ID, UserTestData.GUEST_ID);
-        MealTestData.assertMatch(updatedMeal, mealToUpdate);
+        checkUpdateMealByIdAndUserId(MealTestData.GUEST_MEAL_ID, UserTestData.GUEST_ID);
     }
 
     @Test
@@ -181,10 +149,11 @@ public class MealServiceTest {
     }
 
     @Test
-    public void getAll_AllOk_ReturnListWithMeals() {
+    public void getAll_AllOkForUser_ReturnListWithMeals() {
         List<Meal> meals = mealService.getAll(UserTestData.USER_ID);
 
-        Assertions.assertThat(meals).hasSize(7).contains(MealTestData.userMeal);
+        Assertions.assertThat(meals).hasSize(7).contains(MealTestData.userMeal)
+                .isSortedAccordingTo(Comparator.comparing(Meal::getDateTime).reversed());
     }
 
     @Test
@@ -196,17 +165,17 @@ public class MealServiceTest {
 
     @Test
     public void getBetweenInclusive_AllOkForUser_ReturnListOfMeals() {
-        checkMealsById(UserTestData.USER_ID, MealTestData.userMeal);
+        checkGetBetweenInclusiveByUserId(UserTestData.USER_ID, MealTestData.userMeal);
     }
 
     @Test
     public void getBetweenInclusive_ForAdmin_ReturnOnlyAdminsMeals() {
-        checkMealsById(UserTestData.ADMIN_ID, MealTestData.adminMeal);
+        checkGetBetweenInclusiveByUserId(UserTestData.ADMIN_ID, MealTestData.adminMeal);
     }
 
     @Test
     public void getBetweenInclusive_ForGuest_ReturnOnlyAdminsMeals() {
-        checkMealsById(UserTestData.GUEST_ID, MealTestData.guestMeal);
+        checkGetBetweenInclusiveByUserId(UserTestData.GUEST_ID, MealTestData.guestMeal);
     }
 
     @Test
@@ -214,6 +183,7 @@ public class MealServiceTest {
         List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LOCAL_DATE_TIME.toLocalDate(),
                 MealTestData.LOCAL_DATE_TIME.toLocalDate(), UserTestData.USER_ID);
         Assertions.assertThat(betweenInclusive).hasSize(3).contains(MealTestData.userMeal);
+        checkMealSortingOrder(betweenInclusive);
     }
 
     @Test
@@ -224,10 +194,38 @@ public class MealServiceTest {
         Assertions.assertThat(betweenInclusive).isEmpty();
     }
 
-    private void checkMealsById(int id, Meal meal) {
+    private void checkGetMealByIdAndUserId(int mealId, int userId, Meal meal) {
+        Meal foundMeal = mealService.get(mealId, userId);
+
+        MealTestData.assertMatch(foundMeal, meal);
+    }
+
+    private void checkDeleteMealByIdAndUserId(int mealId, int userId) {
+        mealService.delete(mealId, userId);
+
+        Assertions.assertThatExceptionOfType(NotFoundException.class)
+                .isThrownBy(() -> mealService.get(mealId, userId))
+                .withMessage("Not found entity with id=" + mealId);
+    }
+
+    private void checkUpdateMealByIdAndUserId(int mealId, int userId) {
+        Meal mealToUpdate = MealTestData.getUpdatedUserMeal(mealId, userId, "updated");
+
+        mealService.update(mealToUpdate, userId);
+
+        Meal updatedMeal = mealService.get(mealId, userId);
+        MealTestData.assertMatch(updatedMeal, mealToUpdate);
+    }
+
+    private void checkGetBetweenInclusiveByUserId(int userId, Meal meal) {
         List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LOCAL_DATE_TIME.toLocalDate(),
-                MealTestData.LOCAL_DATE_TIME.toLocalDate().plusDays(2), id);
+                MealTestData.LOCAL_DATE_TIME.toLocalDate().plusDays(2), userId);
 
         Assertions.assertThat(betweenInclusive).hasSize(7).contains(meal);
+        checkMealSortingOrder(betweenInclusive);
+    }
+
+    private void checkMealSortingOrder(List<Meal> meals) {
+        Assertions.assertThat(meals).isSortedAccordingTo(Comparator.comparing(Meal::getDateTime).reversed());
     }
 }
