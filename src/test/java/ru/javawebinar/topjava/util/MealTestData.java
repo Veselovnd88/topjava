@@ -11,26 +11,22 @@ public class MealTestData {
 
     public static final int USER_MEAL_ID = AbstractBaseEntity.START_SEQ + 3;
 
-    public static final int ADMIN_MEAL_ID = AbstractBaseEntity.START_SEQ + 4;
+    public static final int ADMIN_MEAL_ID = AbstractBaseEntity.START_SEQ + 10;
 
-    public static final int GUEST_MEAL_ID = AbstractBaseEntity.START_SEQ + 5;
+    public static final int GUEST_MEAL_ID = AbstractBaseEntity.START_SEQ + 17;
 
     public static final int NOT_FOUND_MEAL_ID = AbstractBaseEntity.START_SEQ + 100;
 
-    public static final LocalDateTime LDT_USER = LocalDateTime.of(2024, 2, 14, 20, 0, 6);
+    public static final LocalDateTime LOCAL_DATE_TIME = LocalDateTime.of(2024, 2, 14, 10, 0, 6);
 
-    public static final LocalDateTime LDT_ADMIN = LocalDateTime.of(2024, 2, 15, 20, 0, 6);
+    public static final Meal userMeal = new Meal(USER_MEAL_ID, LOCAL_DATE_TIME, "user meal breakFast", 500);
 
-    public static final LocalDateTime LDT_GUEST = LocalDateTime.of(2024, 2, 13, 20, 0, 6);
+    public static final Meal adminMeal = new Meal(ADMIN_MEAL_ID, LOCAL_DATE_TIME, "admin meal breakFast", 500);
 
-    public static final Meal USER_MEAL = new Meal(USER_MEAL_ID, LDT_USER, "user meal", 1000);
-
-    public static final Meal ADMIN_MEAL = new Meal(ADMIN_MEAL_ID, LDT_ADMIN, "admin meal", 500);
-
-    public static final Meal GUEST_MEAL = new Meal(GUEST_MEAL_ID, LDT_GUEST, "guest meal", 600);
+    public static final Meal guestMeal = new Meal(GUEST_MEAL_ID, LOCAL_DATE_TIME, "guest meal breakFast", 500);
 
     public static Meal getNewUserMeal(int userId) {
-        return new Meal(null, LDT_USER.plusDays(1), "user's " + userId + " meal", 100);
+        return new Meal(null, LOCAL_DATE_TIME.minusWeeks(1), "user's " + userId + " meal", 100);
     }
 
     public static Meal getUpdatedUserMeal(int id, int userId, String updatedDesc) {

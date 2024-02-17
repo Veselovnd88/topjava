@@ -1,6 +1,9 @@
-DELETE FROM meals;
-DELETE FROM user_role;
-DELETE FROM users;
+DELETE
+FROM meals;
+DELETE
+FROM user_role;
+DELETE
+FROM users;
 ALTER SEQUENCE global_seq RESTART WITH 100000;
 
 INSERT INTO users (name, email, password)
@@ -13,6 +16,26 @@ VALUES ('USER', 100000),
        ('ADMIN', 100001);
 
 INSERT INTO meals(description, calories, date_time, user_id)
-VALUES ('user meal', 1000, '2024-02-14 20:00:06', 100000),
-       ('admin meal', 500, '2024-02-15 20:00:06', 100001),
-       ('guest meal', 600, '2024-02-13 20:00:06', 100002);
+VALUES ('user meal breakFast', 500, '2024-02-14 10:00:06', 100000),
+       ('user meal lunch', 1000, '2024-02-14 13:00:06', 100000),
+       ('user meal dinner', 500, '2024-02-14 20:00:06', 100000),
+       ('user meal border', 500, '2024-02-15 00:00:00', 100000),
+       ('user meal breakfast', 1000, '2024-02-15 10:00:06', 100000),
+       ('user meal lunch', 500, '2024-02-15 13:00:06', 100000),
+       ('user meal dinner', 410, '2024-02-15 20:00:06', 100000),
+
+       ('admin meal breakFast', 500, '2024-02-14 10:00:06', 100001),
+       ('admin meal lunch', 1000, '2024-02-14 13:00:06', 100001),
+       ('admin meal dinner', 500, '2024-02-14 20:00:06', 100001),
+       ('admin meal border', 500, '2024-02-15 00:00:00', 100001),
+       ('admin meal breakfast', 1000, '2024-02-15 10:00:06', 100001),
+       ('admin meal lunch', 500, '2024-02-15 13:00:06', 100001),
+       ('admin meal dinner', 410, '2024-02-15 20:00:06', 100001),
+
+       ('guest meal breakFast', 500, '2024-02-14 10:00:06', 100002),
+       ('guest meal lunch', 1000, '2024-02-14 13:00:06', 100002),
+       ('guest meal dinner', 500, '2024-02-14 20:00:06', 100002),
+       ('guest meal border', 500, '2024-02-15 00:00:00', 100002),
+       ('guest meal breakfast', 1000, '2024-02-15 10:00:06', 100002),
+       ('guest meal lunch', 500, '2024-02-15 13:00:06', 100002),
+       ('guest meal dinner', 410, '2024-02-15 20:00:06', 100002);

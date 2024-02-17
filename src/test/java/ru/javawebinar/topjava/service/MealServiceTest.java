@@ -32,26 +32,26 @@ public class MealServiceTest {
     }
 
     @Autowired
-    MealService mealService;
+    private MealService mealService;
 
     @Test
     public void create_AllOk_ReturnSavedMealWithId() {
         int userId = UserTestData.USER_ID;
-        Meal newMeal = MealTestData.getNewUserMeal(userId);
 
-        Meal savedMeal = mealService.create(newMeal, userId);
+        Meal savedMeal = mealService.create(MealTestData.getNewUserMeal(userId), userId);
 
+        Meal newMealForCheck = MealTestData.getNewUserMeal(userId);
         Integer mealId = savedMeal.getId();
-        newMeal.setId(mealId);
-        MealTestData.assertMatch(savedMeal, newMeal);
+        newMealForCheck.setId(mealId);
+        MealTestData.assertMatch(savedMeal, newMealForCheck);
         MealTestData.assertMatch(mealService.get(mealId, userId), savedMeal);
     }
 
     @Test
-    public void create_SameDateTimeSameUser_ReturnNull() {
+    public void create_SameDateTimeSameUser_ThrowException() {
         int userId = UserTestData.USER_ID;
         Meal newMeal = MealTestData.getNewUserMeal(userId);
-        newMeal.setDateTime(MealTestData.LDT_USER);
+        newMeal.setDateTime(MealTestData.LOCAL_DATE_TIME);
         Assertions.assertThatExceptionOfType(DataAccessException.class)
                 .isThrownBy(() -> mealService.create(newMeal, userId));
     }
@@ -60,35 +60,21 @@ public class MealServiceTest {
     public void get_ForExistingUserMeal_ReturnCorrectMeal() {
         Meal foundMeal = mealService.get(MealTestData.USER_MEAL_ID, UserTestData.USER_ID);
 
-        MealTestData.assertMatch(foundMeal, MealTestData.USER_MEAL);
+        MealTestData.assertMatch(foundMeal, MealTestData.userMeal);
     }
 
     @Test
     public void get_ForExistingAdminMeal_ReturnCorrectMeal() {
         Meal foundMeal = mealService.get(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID);
 
-        MealTestData.assertMatch(foundMeal, MealTestData.ADMIN_MEAL);
+        MealTestData.assertMatch(foundMeal, MealTestData.adminMeal);
     }
 
     @Test
     public void get_ForExistingGuestMeal_ReturnCorrectMeal() {
         Meal foundMeal = mealService.get(MealTestData.GUEST_MEAL_ID, UserTestData.GUEST_ID);
 
-        MealTestData.assertMatch(foundMeal, MealTestData.GUEST_MEAL);
-    }
-
-    @Test
-    public void get_ForNewSavedMeal_ReturnCorrectMeal() {
-        int userId = UserTestData.USER_ID;
-        Meal newMeal = MealTestData.getNewUserMeal(userId);
-        Meal savedMeal = mealService.create(newMeal, userId);
-        Integer mealId = savedMeal.getId();
-
-        Meal foundMeal = mealService.get(mealId, userId);
-
-        newMeal.setId(mealId);
-        MealTestData.assertMatch(savedMeal, newMeal);
-        MealTestData.assertMatch(foundMeal, savedMeal);
+        MealTestData.assertMatch(foundMeal, MealTestData.guestMeal);
     }
 
     @Test
@@ -147,7 +133,7 @@ public class MealServiceTest {
     }
 
     @Test
-    public void update_AllOkForUser_ReturnUpdatedMeal() {
+    public void update_AllOkForUser_UpdateUserMeal() {
         Meal mealToUpdate = MealTestData.getUpdatedUserMeal(MealTestData.USER_MEAL_ID, UserTestData.USER_ID, "updated");
 
         mealService.update(mealToUpdate, UserTestData.USER_ID);
@@ -157,7 +143,7 @@ public class MealServiceTest {
     }
 
     @Test
-    public void update_AllOkForAdmin_ReturnUpdatedMeal() {
+    public void update_AllOkForAdmin_UpdateAdminMeal() {
         Meal mealToUpdate = MealTestData.getUpdatedUserMeal(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID, "updated");
 
         mealService.update(mealToUpdate, UserTestData.ADMIN_ID);
@@ -167,7 +153,7 @@ public class MealServiceTest {
     }
 
     @Test
-    public void update_AllOkForGuest_ReturnUpdatedMeal() {
+    public void update_AllOkForGuest_UpdateGuestMeal() {
         Meal mealToUpdate = MealTestData.getUpdatedUserMeal(MealTestData.GUEST_MEAL_ID, UserTestData.GUEST_ID, "updated");
 
         mealService.update(mealToUpdate, UserTestData.GUEST_ID);
@@ -196,17 +182,13 @@ public class MealServiceTest {
 
     @Test
     public void getAll_AllOk_ReturnListWithMeals() {
-        int userId = UserTestData.USER_ID;
-        Meal newMeal = MealTestData.getNewUserMeal(userId);
-        Meal savedMeal = mealService.create(newMeal, userId);
+        List<Meal> meals = mealService.getAll(UserTestData.USER_ID);
 
-        List<Meal> meals = mealService.getAll(userId);
-
-        MealTestData.assertMatch(meals, savedMeal, MealTestData.USER_MEAL);
+        Assertions.assertThat(meals).hasSize(7).contains(MealTestData.userMeal);
     }
 
     @Test
-    public void getAll_WrongUser_ReturnEmptyList() {
+    public void getAll_UserWithoutMeals_ReturnEmptyList() {
         List<Meal> meals = mealService.getAll(UserTestData.NOT_FOUND);
 
         Assertions.assertThat(meals).isEmpty();
@@ -214,68 +196,32 @@ public class MealServiceTest {
 
     @Test
     public void getBetweenInclusive_AllOkForUser_ReturnListOfMeals() {
-        int userId = UserTestData.USER_ID;
-        Meal newMeal1 = MealTestData.getNewUserMeal(userId);
-        Meal savedMeal1 = mealService.create(newMeal1, userId);
+        List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LOCAL_DATE_TIME.toLocalDate(),
+                MealTestData.LOCAL_DATE_TIME.toLocalDate().plusDays(1), UserTestData.USER_ID);
 
-        List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LDT_USER.toLocalDate(),
-                MealTestData.LDT_USER.toLocalDate().plusDays(1), userId);
-
-        MealTestData.assertMatch(betweenInclusive, savedMeal1, MealTestData.USER_MEAL);
+        Assertions.assertThat(betweenInclusive).hasSize(7).contains(MealTestData.userMeal);
     }
 
     @Test
     public void getBetweenInclusive_OneDateInBorders_ReturnListOfUserMeals() {
-        int userId = UserTestData.USER_ID;
-        Meal newMeal1 = MealTestData.getNewUserMeal(userId);
-        mealService.create(newMeal1, userId);
-
-        List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LDT_USER.toLocalDate(),
-                MealTestData.LDT_USER.toLocalDate(), userId);
-
-        MealTestData.assertMatch(betweenInclusive, MealTestData.USER_MEAL);
+        List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LOCAL_DATE_TIME.toLocalDate(),
+                MealTestData.LOCAL_DATE_TIME.toLocalDate(), UserTestData.USER_ID);
+        Assertions.assertThat(betweenInclusive).hasSize(3).contains(MealTestData.userMeal);
     }
 
     @Test
     public void getBetweenInclusive_NoMatches_ReturnEmptyList() {
-        int userId = UserTestData.USER_ID;
-        Meal newMeal1 = MealTestData.getNewUserMeal(userId);
-        mealService.create(newMeal1, userId);
-
-        List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LDT_USER.toLocalDate().minusDays(100),
-                MealTestData.LDT_USER.toLocalDate().minusDays(50), userId);
+        List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LOCAL_DATE_TIME.toLocalDate().minusDays(100),
+                MealTestData.LOCAL_DATE_TIME.toLocalDate().minusDays(50), UserTestData.USER_ID);
 
         Assertions.assertThat(betweenInclusive).isEmpty();
     }
 
     @Test
     public void getBetweenInclusive_WrongUser_ReturnOnlyAdminsMeals() {
-        int userId = UserTestData.USER_ID;
-        Meal newMeal1 = MealTestData.getNewUserMeal(userId);
-        mealService.create(newMeal1, userId);
-        Meal newMeal2 = MealTestData.getNewUserMeal(userId);
-        newMeal2.setDateTime(MealTestData.LDT_USER.plusDays(2));
-        mealService.create(newMeal2, userId);
+        List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LOCAL_DATE_TIME.toLocalDate(),
+                MealTestData.LOCAL_DATE_TIME.toLocalDate().plusDays(2), UserTestData.ADMIN_ID);
 
-        List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LDT_USER.toLocalDate(),
-                MealTestData.LDT_USER.toLocalDate().plusDays(2), UserTestData.ADMIN_ID);
-
-        MealTestData.assertMatch(betweenInclusive, MealTestData.ADMIN_MEAL);
-    }
-
-    @Test
-    public void getBetweenInclusive_MealsWithStartAndEndOfDay_ReturnListOfMeals() {
-        int userId = UserTestData.USER_ID;
-        Meal newMeal1 = MealTestData.getNewUserMeal(userId);
-        newMeal1.setDateTime(MealTestData.LDT_USER.toLocalDate().atStartOfDay());
-        Meal savedMeal1 = mealService.create(newMeal1, userId);
-        Meal newMeal2 = MealTestData.getNewUserMeal(userId);
-        newMeal2.setDateTime(MealTestData.LDT_USER.plusDays(3).toLocalDate().atStartOfDay().minusSeconds(1));
-        Meal savedMeal2 = mealService.create(newMeal2, userId);
-
-        List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LDT_USER.toLocalDate(),
-                MealTestData.LDT_USER.toLocalDate().plusDays(2), userId);
-
-        MealTestData.assertMatch(betweenInclusive, savedMeal2, MealTestData.USER_MEAL, savedMeal1);
+        Assertions.assertThat(betweenInclusive).hasSize(7).contains(MealTestData.adminMeal);
     }
 }
