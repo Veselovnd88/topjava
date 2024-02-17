@@ -196,10 +196,17 @@ public class MealServiceTest {
 
     @Test
     public void getBetweenInclusive_AllOkForUser_ReturnListOfMeals() {
-        List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LOCAL_DATE_TIME.toLocalDate(),
-                MealTestData.LOCAL_DATE_TIME.toLocalDate().plusDays(1), UserTestData.USER_ID);
+        checkMealsById(UserTestData.USER_ID, MealTestData.userMeal);
+    }
 
-        Assertions.assertThat(betweenInclusive).hasSize(7).contains(MealTestData.userMeal);
+    @Test
+    public void getBetweenInclusive_ForAdmin_ReturnOnlyAdminsMeals() {
+        checkMealsById(UserTestData.ADMIN_ID, MealTestData.adminMeal);
+    }
+
+    @Test
+    public void getBetweenInclusive_ForGuest_ReturnOnlyAdminsMeals() {
+        checkMealsById(UserTestData.GUEST_ID, MealTestData.guestMeal);
     }
 
     @Test
@@ -217,11 +224,10 @@ public class MealServiceTest {
         Assertions.assertThat(betweenInclusive).isEmpty();
     }
 
-    @Test
-    public void getBetweenInclusive_WrongUser_ReturnOnlyAdminsMeals() {
+    private void checkMealsById(int id, Meal meal) {
         List<Meal> betweenInclusive = mealService.getBetweenInclusive(MealTestData.LOCAL_DATE_TIME.toLocalDate(),
-                MealTestData.LOCAL_DATE_TIME.toLocalDate().plusDays(2), UserTestData.ADMIN_ID);
+                MealTestData.LOCAL_DATE_TIME.toLocalDate().plusDays(2), id);
 
-        Assertions.assertThat(betweenInclusive).hasSize(7).contains(MealTestData.adminMeal);
+        Assertions.assertThat(betweenInclusive).hasSize(7).contains(meal);
     }
 }
