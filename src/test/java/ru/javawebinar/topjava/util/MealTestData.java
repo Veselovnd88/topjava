@@ -11,6 +11,8 @@ import java.util.List;
 
 public class MealTestData {
 
+    public static final String NOT_FOUND_MSG = "Not found entity with id=";
+
     public static final int USER_MEAL_ID = AbstractBaseEntity.START_SEQ + 3;
 
     public static final int ADMIN_MEAL_ID = AbstractBaseEntity.START_SEQ + 10;

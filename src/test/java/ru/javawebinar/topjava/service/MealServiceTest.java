@@ -78,46 +78,48 @@ public class MealServiceTest {
     public void get_WrongUser_ThrowNotFound() {
         Assertions.assertThatExceptionOfType(NotFoundException.class)
                 .isThrownBy(() -> mealService.get(MealTestData.USER_MEAL_ID, UserTestData.ADMIN_ID))
-                .withMessage("Not found entity with id=" + MealTestData.USER_MEAL_ID);
+                .withMessage(MealTestData.NOT_FOUND_MSG + MealTestData.USER_MEAL_ID);
     }
 
     @Test
     public void get_NoSuchMeal_ThrowNotFound() {
         Assertions.assertThatExceptionOfType(NotFoundException.class)
                 .isThrownBy(() -> mealService.get(MealTestData.NOT_FOUND_MEAL_ID, UserTestData.ADMIN_ID))
-                .withMessage("Not found entity with id=" + MealTestData.NOT_FOUND_MEAL_ID);
+                .withMessage(MealTestData.NOT_FOUND_MSG + MealTestData.NOT_FOUND_MEAL_ID);
     }
 
     @Test
     public void delete_AllOkForUser_Delete() {
-        checkDeleteMealByIdAndUserIdForException(MealTestData.USER_MEAL_ID, UserTestData.USER_ID);
+        checkDeleteMealByIdAndUserId(MealTestData.USER_MEAL_ID, UserTestData.USER_ID);
     }
 
     @Test
     public void delete_AllOkForAdmin_Delete() {
-        checkDeleteMealByIdAndUserIdForException(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID);
+        checkDeleteMealByIdAndUserId(MealTestData.ADMIN_MEAL_ID, UserTestData.ADMIN_ID);
     }
 
-    private void checkDeleteMealByIdAndUserIdForException(int mealId, int userId) {
+    private void checkDeleteMealByIdAndUserId(int mealId, int userId) {
         mealService.delete(mealId, userId);
 
         Assertions.assertThatExceptionOfType(NotFoundException.class)
                 .isThrownBy(() -> mealService.get(mealId, userId))
-                .withMessage("Not found entity with id=" + mealId);
+                .withMessage(MealTestData.NOT_FOUND_MSG + mealId);
     }
 
     @Test
     public void delete_WrongUser_ThrowNotFound() {
-        Assertions.assertThatExceptionOfType(NotFoundException.class)
-                .isThrownBy(() -> mealService.delete(MealTestData.USER_MEAL_ID, UserTestData.ADMIN_ID))
-                .withMessage("Not found entity with id=" + MealTestData.USER_MEAL_ID);
+        checkDeleteMealByIdAndUserIdForException(MealTestData.USER_MEAL_ID, UserTestData.ADMIN_ID);
     }
 
     @Test
     public void delete_NoSuchMeal_ThrowNotFound() {
+        checkDeleteMealByIdAndUserIdForException(MealTestData.NOT_FOUND_MEAL_ID, UserTestData.USER_ID);
+    }
+
+    private void checkDeleteMealByIdAndUserIdForException(int mealId, int userId) {
         Assertions.assertThatExceptionOfType(NotFoundException.class)
-                .isThrownBy(() -> mealService.delete(MealTestData.NOT_FOUND_MEAL_ID, UserTestData.ADMIN_ID))
-                .withMessage("Not found entity with id=" + MealTestData.NOT_FOUND_MEAL_ID);
+                .isThrownBy(() -> mealService.delete(mealId, userId))
+                .withMessage(MealTestData.NOT_FOUND_MSG + mealId);
     }
 
     @Test
@@ -159,7 +161,7 @@ public class MealServiceTest {
 
         Assertions.assertThatExceptionOfType(NotFoundException.class)
                 .isThrownBy(() -> mealService.update(mealToUpdate, userId))
-                .withMessage("Not found entity with id=" + mealId);
+                .withMessage(MealTestData.NOT_FOUND_MSG + mealId);
     }
 
     @Test
@@ -195,6 +197,7 @@ public class MealServiceTest {
 
     private void checkGetBetweenInclusiveByUserId(int userId, Meal meal, int size) {
         LocalDate localDate = LocalDateTime.of(2024, 2, 14, 10, 0, 6).toLocalDate();
+
         List<Meal> meals = mealService.getBetweenInclusive(localDate, localDate.plusDays(2), userId);
 
         MealTestData.checkMealsListWithSizeContainsSorting(meals, size, meal);
@@ -203,13 +206,16 @@ public class MealServiceTest {
     @Test
     public void getBetweenInclusive_OneDateInBorders_ReturnListOfUserMeals() {
         LocalDate localDate = LocalDateTime.of(2024, 2, 14, 10, 0, 6).toLocalDate();
+
         List<Meal> betweenInclusive = mealService.getBetweenInclusive(localDate, localDate, UserTestData.USER_ID);
+
         MealTestData.checkMealsListWithSizeContainsSorting(betweenInclusive, 3, MealTestData.userMeal);
     }
 
     @Test
     public void getBetweenInclusive_NoMatches_ReturnEmptyList() {
         LocalDate localDate = LocalDateTime.of(2024, 2, 14, 10, 0, 6).toLocalDate();
+
         List<Meal> meals = mealService.getBetweenInclusive(localDate.minusDays(100), localDate.minusDays(50),
                 UserTestData.USER_ID);
 
