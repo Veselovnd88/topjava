@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.util;
+package ru.javawebinar.topjava;
 
 import org.assertj.core.api.Assertions;
 import ru.javawebinar.topjava.model.AbstractBaseEntity;
