@@ -8,7 +8,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -16,7 +15,14 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.util.List;
 
 import static org.junit.Assert.assertThrows;
-import static ru.javawebinar.topjava.UserTestData.*;
+import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.UserTestData.USER_MATCHER;
+import static ru.javawebinar.topjava.UserTestData.admin;
+import static ru.javawebinar.topjava.UserTestData.getNew;
+import static ru.javawebinar.topjava.UserTestData.getUpdated;
+import static ru.javawebinar.topjava.UserTestData.guest;
+import static ru.javawebinar.topjava.UserTestData.user;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -41,8 +47,8 @@ public class UserServiceTest {
 
     @Test
     public void duplicateMailCreate() {
-        assertThrows(DataAccessException.class, () ->
-                service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.USER)));
+        User userToCreate = new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.USER);
+        assertThrows(DataAccessException.class, () -> service.create(userToCreate));
     }
 
     @Test
@@ -59,7 +65,7 @@ public class UserServiceTest {
     @Test
     public void get() {
         User user = service.get(USER_ID);
-        USER_MATCHER.assertMatch(user, UserTestData.user);
+        USER_MATCHER.assertMatch(user, user);
     }
 
     @Test
