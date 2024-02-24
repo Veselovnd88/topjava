@@ -27,7 +27,7 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
-        User user = em.find(User.class, userId); //check if user exists
+        User user = em.getReference(User.class, userId); //check if user exists
         ValidationUtil.checkNotFoundWithId(user, userId);
         meal.setUser(user);
         if (meal.isNew()) {
