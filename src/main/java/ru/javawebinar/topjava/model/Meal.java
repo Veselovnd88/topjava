@@ -17,7 +17,6 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Objects;
 
 @NamedQueries({
         @NamedQuery(name = Meal.DELETE, query = "DELETE Meal m WHERE m.id=:id AND m.user.id=:userId"),
@@ -28,16 +27,16 @@ import java.util.Objects;
 })
 @Entity
 @Table(name = "meal", uniqueConstraints =
-        {@UniqueConstraint(name = "meal_unique_user_datetime_idx", columnNames = {"user_id", "date_time" })})
+        {@UniqueConstraint(name = "meal_unique_user_datetime_idx", columnNames = {"user_id", "date_time"})})
 public class Meal extends AbstractBaseEntity {
 
-    public static final String DELETE = "Meal.Delete";
+    public static final String DELETE = "Meal.delete";
 
-    public static final String GET = "Meal.Get";
+    public static final String GET = "Meal.get";
 
-    public static final String GET_ALL = "Meal.GetAll";
+    public static final String GET_ALL = "Meal.getAll";
 
-    public static final String GET_ALL_BETWEEN = "Meal.GetAllBetween";
+    public static final String GET_ALL_BETWEEN = "Meal.getAllBetween";
     @Column(name = "date_time", nullable = false)
     @NotNull
     private LocalDateTime dateTime;
@@ -53,6 +52,7 @@ public class Meal extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    @NotNull
     private User user;
 
     public Meal() {
@@ -117,20 +117,5 @@ public class Meal extends AbstractBaseEntity {
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof Meal)) return false;
-        if (!super.equals(object)) return false;
-        Meal meal = (Meal) object;
-        return getCalories() == meal.getCalories() && Objects.equals(getDateTime(), meal.getDateTime())
-                && Objects.equals(getDescription(), meal.getDescription()) && Objects.equals(getUser(), meal.getUser());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getDateTime(), getDescription(), getCalories(), getUser());
     }
 }
