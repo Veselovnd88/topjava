@@ -27,6 +27,7 @@ import static ru.javawebinar.topjava.MealTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.MealTestData.adminMeal1;
 import static ru.javawebinar.topjava.MealTestData.getNew;
 import static ru.javawebinar.topjava.MealTestData.getUpdated;
+import static ru.javawebinar.topjava.MealTestData.getUpdatedNotFound;
 import static ru.javawebinar.topjava.MealTestData.meal1;
 import static ru.javawebinar.topjava.MealTestData.meal2;
 import static ru.javawebinar.topjava.MealTestData.meal3;
@@ -104,6 +105,13 @@ public class MealServiceTest {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
         MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), getUpdated());
+    }
+
+    @Test
+    public void updateNotFound() {
+        Meal updatedNotFound = getUpdatedNotFound();
+
+        assertThrows(NotFoundException.class, () -> service.update(updatedNotFound, USER_ID));
     }
 
     @Test
