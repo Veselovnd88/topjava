@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public class DataJpaMealRepository implements MealRepository {
 
-    private static final Sort SORT_DESC = Sort.by(Sort.Direction.DESC);
+    private static final Sort SORT_DESC = Sort.by(Sort.Direction.DESC, "dateTime");
 
     private final CrudMealRepository crudRepository;
     @PersistenceContext
@@ -54,11 +54,11 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return crudRepository.getAll(userId);
+        return crudRepository.getAll(userId, SORT_DESC);
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        return crudRepository.getAllBetween(startDateTime, endDateTime, userId);
+        return crudRepository.getAllBetween(startDateTime, endDateTime, userId, SORT_DESC);
     }
 }
