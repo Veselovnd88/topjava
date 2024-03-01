@@ -42,8 +42,8 @@ public abstract class JdbcMealBaseRepository implements MealRepository {
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
-                .addValue("date_time", meal.getDateTime())
                 .addValue("user_id", userId);
+        addLocalDateTimeToMeal(map, meal.getDateTime());
 
         if (meal.isNew()) {
             Number newId = insertMeal.executeAndReturnKey(map);
@@ -88,11 +88,7 @@ public abstract class JdbcMealBaseRepository implements MealRepository {
         return jdbcTemplate;
     }
 
-    public NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
-        return namedParameterJdbcTemplate;
-    }
-
-    public SimpleJdbcInsert getInsertMeal() {
-        return insertMeal;
+    protected void addLocalDateTimeToMeal(MapSqlParameterSource map, LocalDateTime localDateTime) {
+        map.addValue("date_time", localDateTime);
     }
 }
