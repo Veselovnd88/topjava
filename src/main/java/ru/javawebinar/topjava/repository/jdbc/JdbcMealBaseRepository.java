@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public abstract class JdbcMealBaseRepository implements MealRepository {
+public class JdbcMealBaseRepository implements MealRepository {
 
     protected static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
@@ -26,14 +26,17 @@ public abstract class JdbcMealBaseRepository implements MealRepository {
 
     private final SimpleJdbcInsert insertMeal;
 
+    private final JdbcHelper jdbcHelper;
+
     @Autowired
-    protected JdbcMealBaseRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    protected JdbcMealBaseRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcHelper jdbcHelper) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meal")
                 .usingGeneratedKeyColumns("id");
 
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        this.jdbcHelper = jdbcHelper;
     }
 
     @Override
@@ -42,7 +45,7 @@ public abstract class JdbcMealBaseRepository implements MealRepository {
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
-                .addValue("date_time", meal.getDateTime())
+                .addValue("date_time", jdbcHelper.convertLocalDateTime(meal.getDateTime()))
                 .addValue("user_id", userId);
 
         if (meal.isNew()) {
@@ -81,18 +84,8 @@ public abstract class JdbcMealBaseRepository implements MealRepository {
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
         return jdbcTemplate.query(
                 "SELECT * FROM meal WHERE user_id=?  AND date_time >=  ? AND date_time < ? ORDER BY date_time DESC",
-                ROW_MAPPER, userId, startDateTime, endDateTime);
-    }
-
-    public JdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
-    }
-
-    public NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
-        return namedParameterJdbcTemplate;
-    }
-
-    public SimpleJdbcInsert getInsertMeal() {
-        return insertMeal;
+                ROW_MAPPER, userId,
+                jdbcHelper.convertLocalDateTime(startDateTime),
+                jdbcHelper.convertLocalDateTime(endDateTime));
     }
 }
