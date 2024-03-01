@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.Profiles;
-import ru.javawebinar.topjava.service.UserServiceBaseTest;
 
 @ActiveProfiles(Profiles.DATAJPA)
 public class UserServiceDataJpaTest extends UserServiceBaseTest {
