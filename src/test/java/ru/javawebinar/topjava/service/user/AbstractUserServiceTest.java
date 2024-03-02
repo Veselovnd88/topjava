@@ -24,7 +24,7 @@ import static ru.javawebinar.topjava.UserTestData.getUpdated;
 import static ru.javawebinar.topjava.UserTestData.guest;
 import static ru.javawebinar.topjava.UserTestData.user;
 
-public abstract class UserServiceBaseTest extends AbstractServiceTest {
+public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Autowired
     UserService service;

@@ -16,9 +16,9 @@ import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_MATCHER;
 
 @ActiveProfiles(Profiles.DATAJPA)
-public class MealServiceDataJpaTest extends MealServiceBaseTest {
+public class DataJpaMealServiceTest extends AbstractMealServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(MealServiceDataJpaTest.class);
+    private static final Logger log = LoggerFactory.getLogger(DataJpaMealServiceTest.class);
 
     @BeforeClass
     public static void setUp() {

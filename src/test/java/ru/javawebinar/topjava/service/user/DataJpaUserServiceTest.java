@@ -15,9 +15,9 @@ import static ru.javawebinar.topjava.UserTestData.GUEST_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ActiveProfiles(Profiles.DATAJPA)
-public class UserServiceDataJpaTest extends UserServiceBaseTest {
+public class DataJpaUserServiceTest extends AbstractUserServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(UserServiceDataJpaTest.class);
+    private static final Logger log = LoggerFactory.getLogger(DataJpaUserServiceTest.class);
 
     @BeforeClass
     public static void setUp() {

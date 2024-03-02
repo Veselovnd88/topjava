@@ -7,9 +7,9 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.Profiles;
 
 @ActiveProfiles(Profiles.JDBC)
-public class UserServiceJdbcTest extends UserServiceBaseTest {
+public class JdbcUserServiceTest extends AbstractUserServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(UserServiceJdbcTest.class);
+    private static final Logger log = LoggerFactory.getLogger(JdbcUserServiceTest.class);
 
     @BeforeClass
     public static void setUp() {

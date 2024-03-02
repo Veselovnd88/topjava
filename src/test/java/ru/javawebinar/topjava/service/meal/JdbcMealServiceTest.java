@@ -7,9 +7,9 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.Profiles;
 
 @ActiveProfiles(Profiles.JDBC)
-public class MeasServiceJdbcTest extends MealServiceBaseTest {
+public class JdbcMealServiceTest extends AbstractMealServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(MeasServiceJdbcTest.class);
+    private static final Logger log = LoggerFactory.getLogger(JdbcMealServiceTest.class);
 
     @BeforeClass
     public static void setUp() {
