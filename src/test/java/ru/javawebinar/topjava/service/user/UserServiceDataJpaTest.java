@@ -26,14 +26,14 @@ public class UserServiceDataJpaTest extends UserServiceBaseTest {
 
     @Test
     public void getWithMeals() {
-        User user = super.service.get(USER_ID);
+        User user = super.service.getWithMeals(USER_ID);
 
         MealTestData.MEAL_MATCHER.assertMatch(user.getMeals(), MealTestData.meals);
     }
 
     @Test
     public void getUserWithoutMeals() {
-        User user = super.service.get(GUEST_ID);
+        User user = super.service.getWithMeals(GUEST_ID);
 
         MealTestData.MEAL_MATCHER.assertMatch(user.getMeals(), Collections.emptyList());
     }

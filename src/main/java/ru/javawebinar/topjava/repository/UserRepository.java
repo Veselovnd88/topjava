@@ -5,6 +5,12 @@ import ru.javawebinar.topjava.model.User;
 import java.util.List;
 
 public interface UserRepository {
+
+    //null if not found
+    default User getWithMeals(int id) {
+        throw new UnsupportedOperationException("Can't get user with meals for this implementation");
+    }
+
     // null if not found, when updated
     User save(User user);
 

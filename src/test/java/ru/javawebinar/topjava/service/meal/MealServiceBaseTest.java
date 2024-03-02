@@ -84,7 +84,7 @@ public abstract class MealServiceBaseTest extends AbstractServiceTest {
     public void update() {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
-        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), getUpdated());
+          MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), getUpdated());
     }
 
     @Test

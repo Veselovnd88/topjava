@@ -6,6 +6,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MealRepository {
+
+    default Meal getWithUser(int id, int userId) {
+        throw new UnsupportedOperationException("Can't get meal with user for this implementation");
+    }
+
     // null if updated meal does not belong to userId
     Meal save(Meal meal, int userId);
 

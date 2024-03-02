@@ -27,7 +27,7 @@ public class MealServiceDataJpaTest extends MealServiceBaseTest {
 
     @Test
     public void getWithUser() {
-        Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
+        Meal actual = service.getWithUser(ADMIN_MEAL_ID, ADMIN_ID);
         MEAL_MATCHER.assertMatch(actual, adminMeal1);
         USER_MATCHER.assertMatch(UserTestData.admin, actual.getUser());
     }

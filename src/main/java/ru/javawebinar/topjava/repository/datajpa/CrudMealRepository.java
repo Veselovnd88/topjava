@@ -13,8 +13,11 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
-    @Query("SELECT m FROM Meal m LEFT JOIN FETCH m.user WHERE m.id=:id and m.user.id=:userId")
+    @Query("SELECT m FROM Meal m WHERE m.id=:id and m.user.id=:userId")
     Meal findById(@Param("id") int id, @Param("userId") int userId);
+
+    @Query("SELECT m FROM Meal m LEFT JOIN FETCH m.user WHERE m.id=:id and m.user.id=:userId")
+    Meal findByIdWithUser(@Param("id") int id, @Param("userId") int userId);
 
     @Transactional
     @Modifying
