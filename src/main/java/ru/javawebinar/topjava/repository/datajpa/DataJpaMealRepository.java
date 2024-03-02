@@ -7,8 +7,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,18 +16,19 @@ public class DataJpaMealRepository implements MealRepository {
     private static final Sort SORT_DESC = Sort.by(Sort.Direction.DESC, "dateTime");
 
     private final CrudMealRepository crudRepository;
-    @PersistenceContext
-    EntityManager em;
+
+    private final CrudUserRepository userRepository;
 
     @Autowired
-    public DataJpaMealRepository(CrudMealRepository crudRepository) {
+    public DataJpaMealRepository(CrudMealRepository crudRepository, CrudUserRepository userRepository) {
         this.crudRepository = crudRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
-            User user = em.getReference(User.class, userId);
+            User user = userRepository.getReferenceById(userId);
             meal.setUser(user);
             return crudRepository.save(meal);
         } else {
