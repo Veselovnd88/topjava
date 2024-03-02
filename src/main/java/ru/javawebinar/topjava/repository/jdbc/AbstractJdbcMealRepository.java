@@ -15,7 +15,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public abstract class JdbcMealBaseRepository<T> implements MealRepository {
+public abstract class AbstractJdbcMealRepository<T> implements MealRepository {
 
     protected static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
@@ -26,7 +26,7 @@ public abstract class JdbcMealBaseRepository<T> implements MealRepository {
     private final SimpleJdbcInsert insertMeal;
 
     @Autowired
-    protected JdbcMealBaseRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    protected AbstractJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meal")
                 .usingGeneratedKeyColumns("id");
