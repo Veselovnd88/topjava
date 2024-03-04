@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -41,9 +40,8 @@ public abstract class AbstractJdbcMealRepository<T> implements MealRepository {
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
-                .addValue("user_id", userId);
-        addLocalDateTimeToMeal(map, meal.getDateTime());
-
+                .addValue("user_id", userId)
+                .addValue("date_time", convertTime(meal.getDateTime()));
         if (meal.isNew()) {
             Number newId = insertMeal.executeAndReturnKey(map);
             meal.setId(newId.intValue());
@@ -78,15 +76,10 @@ public abstract class AbstractJdbcMealRepository<T> implements MealRepository {
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        Pair<T, T> dateTimePair = convertTime(startDateTime, endDateTime);
         return jdbcTemplate.query(
                 "SELECT * FROM meal WHERE user_id=?  AND date_time >=  ? AND date_time < ? ORDER BY date_time DESC",
-                ROW_MAPPER, userId, dateTimePair.getFirst(), dateTimePair.getSecond());
+                ROW_MAPPER, userId, convertTime(startDateTime), convertTime(endDateTime));
     }
 
-    protected void addLocalDateTimeToMeal(MapSqlParameterSource map, LocalDateTime localDateTime) {
-        map.addValue("date_time", localDateTime);
-    }
-
-    protected abstract Pair<T, T> convertTime(LocalDateTime startDateTime, LocalDateTime endDateTime);
+    protected abstract T convertTime(LocalDateTime startDateTime);
 }
