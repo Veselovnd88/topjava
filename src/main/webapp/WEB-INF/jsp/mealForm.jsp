@@ -13,7 +13,6 @@
 </head>
 <body>
 <section>
-    <h3><a href=""><spring:message code="app.home"/></a></h3>
     <hr>
     <h2>
         <c:choose>

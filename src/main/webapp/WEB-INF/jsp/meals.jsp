@@ -14,7 +14,6 @@
 </head>
 <body>
 <section>
-    <h3><a href=""><spring:message code="app.home"/></a></h3>
     <hr/>
     <h2><spring:message code="meal.title"/></h2>
     <form method="get" action="meals/filter">
