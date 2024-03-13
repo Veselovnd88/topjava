@@ -12,8 +12,7 @@
     <h3><a href="index.jsp">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
-    <form method="get" action="meals/filter">
-        <input type="hidden" name="action" value="filter">
+    <form method="get" action="${pageContext.request.contextPath}/meals/filter">
         <dl>
             <dt>From Date (inclusive):</dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
@@ -33,7 +32,7 @@
         <button type="submit">Filter</button>
     </form>
     <hr/>
-    <a href="meals/create">Add Meal</a>
+    <a href="${pageContext.request.contextPath}/meals/create">Add Meal</a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -56,8 +55,8 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="meals/update?id=${meal.id}">Update</a></td>
-                <td><a href="meals/delete?id=${meal.id}">Delete</a></td>
+                <td><a href="${pageContext.request.contextPath}/meals/update?id=${meal.id}">Update</a></td>
+                <td><a href="${pageContext.request.contextPath}/meals/delete?id=${meal.id}">Delete</a></td>
             </tr>
         </c:forEach>
     </table>

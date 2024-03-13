@@ -49,7 +49,7 @@ public class JspMealController extends AbstractMealController {
                               @RequestParam(value = "endTime", required = false) String endTime) {
         model.addAttribute(MEALS_ATTR, getBetween(DateTimeUtil.parseLocalDate(startDate), DateTimeUtil.parseLocalTime(startTime),
                 DateTimeUtil.parseLocalDate(endDate), DateTimeUtil.parseLocalTime(endTime)));
-        return MEALS_ATTR;
+        return MEALS_PAGE;
     }
 
     @GetMapping("/create")
@@ -67,11 +67,11 @@ public class JspMealController extends AbstractMealController {
     }
 
     @PostMapping
-    public String save(Model model, @RequestParam(value = "dateTime") LocalDateTime localDateTime,
+    public String save(@RequestParam(value = "dateTime") String localDateTime,
                        @RequestParam(value = "description") String description,
                        @RequestParam(value = "calories") Integer calories,
                        @RequestParam(value = "id", required = false) Integer id) {
-        Meal meal = new Meal(localDateTime, description, calories);
+        Meal meal = new Meal(LocalDateTime.parse(localDateTime), description, calories);
         if (id != null) {
             update(meal, id);
         } else {
