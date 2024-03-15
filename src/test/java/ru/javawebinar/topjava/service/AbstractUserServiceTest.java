@@ -1,9 +1,10 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -14,15 +15,15 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertThrows;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
-import static ru.javawebinar.topjava.UserTestData.USER_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_MATCHER;
 import static ru.javawebinar.topjava.UserTestData.admin;
 import static ru.javawebinar.topjava.UserTestData.getNew;
 import static ru.javawebinar.topjava.UserTestData.getUpdated;
 import static ru.javawebinar.topjava.UserTestData.guest;
 import static ru.javawebinar.topjava.UserTestData.user;
-
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Autowired
@@ -46,8 +47,8 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void delete() {
-        service.delete(USER_ID);
-        assertThrows(NotFoundException.class, () -> service.get(USER_ID));
+        service.delete(ADMIN_ID);
+        assertThrows(NotFoundException.class, () -> service.get(ADMIN_ID));
     }
 
     @Test
@@ -57,8 +58,8 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void get() {
-        User user = service.get(USER_ID);
-        USER_MATCHER.assertMatch(user, UserTestData.user);
+        User user = service.get(ADMIN_ID);
+        USER_MATCHER.assertMatch(user, admin);
     }
 
     @Test
@@ -76,11 +77,12 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     public void update() {
         User updated = getUpdated();
         service.update(updated);
-        USER_MATCHER.assertMatch(service.get(USER_ID), getUpdated());
+        USER_MATCHER.assertMatch(service.getAll(), guest, getUpdated(), user);
+        service.update(admin); //update back
     }
 
     @Test
-    public void getAll() {
+    public void afterUpdateGetAll() {
         List<User> all = service.getAll();
         USER_MATCHER.assertMatch(all, admin, guest, user);
     }
