@@ -9,10 +9,6 @@
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
-<head>
-    <title><spring:message code="meal.title"/></title>
-</head>
-<body>
 <section>
     <hr/>
     <h2><spring:message code="meal.title"/></h2>

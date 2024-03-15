@@ -21,9 +21,10 @@ public class JspMealController extends AbstractMealController {
     private static final String MEALS_ATTR = "meals";
 
     private static final String MEALS_PAGE = "meals";
-    public static final String MEAL_FORM_PAGE = "mealForm";
 
-    public static final String REDIRECT_MEALS_PAGE = "redirect:/" + MEALS_PAGE;
+    private static final String MEAL_FORM_PAGE = "mealForm";
+
+    private static final String REDIRECT_MEALS_PAGE = "redirect:/" + MEALS_PAGE;
 
     @Autowired
     protected JspMealController(MealService mealService) {
@@ -55,7 +56,6 @@ public class JspMealController extends AbstractMealController {
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000));
-        model.addAttribute("action", "create");
         return MEAL_FORM_PAGE;
     }
 

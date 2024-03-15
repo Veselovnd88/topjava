@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.service;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
@@ -28,9 +27,6 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Autowired
     protected UserService service;
-
-    @Autowired
-    Environment environment;
 
     @Test
     public void create() {
@@ -92,6 +88,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Test
     public void createWithException() {
         // Assume.assumeFalse(environment.acceptsProfiles(org.springframework.core.env.Profiles.of(Profiles.JDBC)));
+        // проверяет профиль и если условие выполняется то тест не выполняется
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "  ", "mail@yandex.ru", "password", Role.USER)));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "  ", "password", Role.USER)));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "  ", Role.USER)));

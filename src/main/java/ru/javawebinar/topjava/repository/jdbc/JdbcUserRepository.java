@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.repository.jdbc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -17,6 +18,7 @@ import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,6 +27,10 @@ import java.util.Map;
 @Repository
 @Transactional(readOnly = true)
 public class JdbcUserRepository implements UserRepository {
+
+    private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+
+    private static final ResultSetExtractor<List<User>> USERS_EXTRACTOR = getResultSetExtractor();
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -49,7 +55,7 @@ public class JdbcUserRepository implements UserRepository {
 
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
-            saveRoles(user.getRoles().stream().toList(), newKey.intValue());
+            saveRoles(new ArrayList<>(user.getRoles()), newKey.intValue());
             user.setId(newKey.intValue());
             return user;
         } else if (namedParameterJdbcTemplate.update("""
@@ -57,7 +63,7 @@ public class JdbcUserRepository implements UserRepository {
                    registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
                 """, parameterSource) != 0) {
             deleteRoles(user.id());
-            saveRoles(user.getRoles().stream().toList(), user.id());
+            saveRoles(new ArrayList<>(user.getRoles()), user.id());
             return user;
         }
         return null;
@@ -83,11 +89,7 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     @Transactional
     public boolean delete(int id) {
-        boolean deleted = jdbcTemplate.update("DELETE FROM users WHERE id=?", id) != 0;
-        if (deleted) {
-            deleteRoles(id);
-        }
-        return deleted;
+        return jdbcTemplate.update("DELETE FROM users WHERE id=?", id) != 0;
     }
 
     private void deleteRoles(int userId) {
@@ -97,7 +99,7 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public User get(int id) {
         List<User> users = jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_role ON users.id = user_role.user_id WHERE id=?",
-                getResultSetExtractor(), id);
+                USERS_EXTRACTOR, id);
         return DataAccessUtils.singleResult(users);
     }
 
@@ -105,38 +107,39 @@ public class JdbcUserRepository implements UserRepository {
     public User getByEmail(String email) {
 //        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         List<User> users = jdbcTemplate
-                .query("SELECT * FROM users LEFT JOIN user_role ON users.id = user_role.user_id WHERE email=?", getResultSetExtractor(), email);
+                .query("SELECT * FROM users LEFT JOIN user_role ON users.id = user_role.user_id WHERE email=?",
+                        USERS_EXTRACTOR, email);
         return DataAccessUtils.singleResult(users);
     }
 
     @Override
     public List<User> getAll() {
         return jdbcTemplate
-                .query("SELECT * FROM users LEFT JOIN user_role ON users.id = user_role.user_id ORDER BY name, email", getResultSetExtractor());
+                .query("SELECT * FROM users LEFT JOIN user_role ON users.id = user_role.user_id ORDER BY name, email",
+                        USERS_EXTRACTOR);
     }
 
-    private ResultSetExtractor<List<User>> getResultSetExtractor() {
+    private static ResultSetExtractor<List<User>> getResultSetExtractor() {
         return rs -> {
             Map<Integer, User> userMap = new LinkedHashMap<>();
             while (rs.next()) {
-                User user = new User();
-                user.setId(rs.getInt("id"));
-                user.setName(rs.getString("name"));
-                user.setEmail(rs.getString("email"));
-                user.setEnabled(rs.getBoolean("enabled"));
-                user.setRegistered(rs.getDate("registered"));
-                user.setPassword(rs.getString("password"));
-                user.setCaloriesPerDay(rs.getInt("calories_per_day"));
                 String role = rs.getString("role");
-                user.setRoles(role == null ? Collections.emptySet() : Collections.singleton(Role.valueOf(role)));
-                userMap.merge(user.getId(), user, (oldValue, value) -> {
+                User user;
+                int userId = rs.getInt("id");
+                if (userMap.containsKey(userId)) {
+                    user = userMap.get(userId);
                     if (role != null) {
-                        oldValue.getRoles().add(Role.valueOf(role));
+                        user.getRoles().add(Role.valueOf(role));
                     }
-                    return oldValue;
-                });
+                } else {
+                    user = ROW_MAPPER.mapRow(rs, rs.getRow());
+                    if (user != null) {
+                        user.setRoles(role == null ? Collections.emptySet() : Collections.singleton(Role.valueOf(role)));
+                        userMap.put(userId, user);
+                    }
+                }
             }
-            return userMap.values().stream().toList();
+            return new ArrayList<>(userMap.values());
         };
     }
 }

@@ -8,21 +8,11 @@
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
-<head>
-    <title><spring:message code="meal.title"/></title>
-</head>
-<body>
 <section>
     <hr>
+    <h2><spring:message code="meal.title"/></h2>
     <h2>
-        <c:choose>
-            <c:when test="${action=='create'}">
-                <spring:message code="meal.create"/>
-            </c:when>
-            <c:otherwise>
-                <spring:message code="meal.edit"/>
-            </c:otherwise>
-        </c:choose>
+        <spring:message code="${meal.id==null? 'meal.create': 'meal.edit'}"/>
     </h2>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <form method="post" action="meals">
