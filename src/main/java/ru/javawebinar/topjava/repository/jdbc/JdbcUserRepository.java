@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,26 @@ public class JdbcUserRepository implements UserRepository {
 
     private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
 
-    private static final ResultSetExtractor<List<User>> USERS_EXTRACTOR = getResultSetExtractor();
+    private static final ResultSetExtractor<List<User>> USERS_EXTRACTOR = rs -> {
+        Map<Integer, User> userMap = new LinkedHashMap<>();
+        while (rs.next()) {
+            String role = rs.getString("role");
+            int userId = rs.getInt("id");
+            User user = userMap.get(userId);
+            if (user != null) {
+                user = userMap.get(userId);
+                if (role != null) {
+                    user.getRoles().add(Role.valueOf(role));
+                }
+            } else {
+                user = ROW_MAPPER.mapRow(rs, rs.getRow());
+                assert user != null;
+                user.setRoles(role == null ? Collections.emptySet() : EnumSet.of(Role.valueOf(role)));
+                userMap.put(userId, user);
+            }
+        }
+        return new ArrayList<>(userMap.values());
+    };
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -117,29 +137,5 @@ public class JdbcUserRepository implements UserRepository {
         return jdbcTemplate
                 .query("SELECT * FROM users LEFT JOIN user_role ON users.id = user_role.user_id ORDER BY name, email",
                         USERS_EXTRACTOR);
-    }
-
-    private static ResultSetExtractor<List<User>> getResultSetExtractor() {
-        return rs -> {
-            Map<Integer, User> userMap = new LinkedHashMap<>();
-            while (rs.next()) {
-                String role = rs.getString("role");
-                User user;
-                int userId = rs.getInt("id");
-                if (userMap.containsKey(userId)) {
-                    user = userMap.get(userId);
-                    if (role != null) {
-                        user.getRoles().add(Role.valueOf(role));
-                    }
-                } else {
-                    user = ROW_MAPPER.mapRow(rs, rs.getRow());
-                    if (user != null) {
-                        user.setRoles(role == null ? Collections.emptySet() : Collections.singleton(Role.valueOf(role)));
-                        userMap.put(userId, user);
-                    }
-                }
-            }
-            return new ArrayList<>(userMap.values());
-        };
     }
 }

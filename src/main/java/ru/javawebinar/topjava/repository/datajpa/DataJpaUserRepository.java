@@ -12,9 +12,11 @@ public class DataJpaUserRepository implements UserRepository {
     private static final Sort SORT_NAME_EMAIL = Sort.by(Sort.Direction.ASC, "name", "email");
 
     private final CrudUserRepository crudRepository;
+    private final CrudMealRepository mealRepository;
 
-    public DataJpaUserRepository(CrudUserRepository crudRepository) {
+    public DataJpaUserRepository(CrudUserRepository crudRepository, CrudMealRepository mealRepository) {
         this.crudRepository = crudRepository;
+        this.mealRepository = mealRepository;
     }
 
     @Override
@@ -44,6 +46,11 @@ public class DataJpaUserRepository implements UserRepository {
 
     @Override
     public User getWithMeals(int id) {
-        return crudRepository.getWithMeals(id);
+        User user = crudRepository.getWithMeals(id);
+        if (user == null) {
+            return null;
+        }
+        user.setMeals(mealRepository.getAll(user.id()));
+        return user;
     }
 }

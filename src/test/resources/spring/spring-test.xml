@@ -4,8 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- https://stackoverflow.com/questions/17814372/jpa-2-0-disable-session-cache-for-unit-tests/58963737#58963737-->
-    <bean id="cacheManager" class="org.springframework.cache.support.NoOpCacheManager"/>
+    <import resource="spring-cache.xml"/>
 
     <bean class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
         <property name="properties">

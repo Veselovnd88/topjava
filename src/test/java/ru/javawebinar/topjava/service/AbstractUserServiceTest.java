@@ -1,8 +1,6 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.model.Role;
@@ -23,7 +21,7 @@ import static ru.javawebinar.topjava.UserTestData.getNew;
 import static ru.javawebinar.topjava.UserTestData.getUpdated;
 import static ru.javawebinar.topjava.UserTestData.guest;
 import static ru.javawebinar.topjava.UserTestData.user;
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
 public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Autowired
@@ -78,19 +76,16 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         User updated = getUpdated();
         service.update(updated);
         USER_MATCHER.assertMatch(service.getAll(), guest, getUpdated(), user);
-        service.update(admin); //update back
     }
 
     @Test
-    public void afterUpdateGetAll() {
+    public void getAll() {
         List<User> all = service.getAll();
         USER_MATCHER.assertMatch(all, admin, guest, user);
     }
 
     @Test
     public void createWithException() {
-        // Assume.assumeFalse(environment.acceptsProfiles(org.springframework.core.env.Profiles.of(Profiles.JDBC)));
-        // проверяет профиль и если условие выполняется то тест не выполняется
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "  ", "mail@yandex.ru", "password", Role.USER)));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "  ", "password", Role.USER)));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "  ", Role.USER)));
