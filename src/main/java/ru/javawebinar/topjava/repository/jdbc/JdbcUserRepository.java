@@ -38,7 +38,6 @@ public class JdbcUserRepository implements UserRepository {
             int userId = rs.getInt("id");
             User user = userMap.get(userId);
             if (user != null) {
-                user = userMap.get(userId);
                 if (role != null) {
                     user.getRoles().add(Role.valueOf(role));
                 }

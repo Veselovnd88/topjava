@@ -4,8 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <import resource="spring-cache.xml"/>
-
     <bean class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
         <property name="properties">
             <props>
