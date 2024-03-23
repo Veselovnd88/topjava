@@ -28,6 +28,8 @@ public class JacksonObjectMapper extends ObjectMapper {
 
         setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
         setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE); //не работает
+        setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.NONE);// не работает
         setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
