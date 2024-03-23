@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web.meal;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,18 +12,19 @@ import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 class MealRestControllerTest extends AbstractControllerTest {
 
-    private static String REST_URL = MealRestController.REST_URL + "/";
+    private final static String REST_URL = MealRestController.REST_URL + "/";
 
     @Autowired
     MealService mealService;
@@ -64,36 +66,39 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween_AllOk_ReturnListOfFilteredMealTos() throws Exception {
-        LocalDate date = LocalDate.of(2020, Month.JANUARY, 30);
-        LocalTime startTime = LocalTime.of(10, 0);
-        LocalTime endTime = LocalTime.of(20, 0);
+        LocalDateTime startDateTime = LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0);
         perform(MockMvcRequestBuilders.get(REST_URL + "/filter")
-                .param("startDate", String.valueOf(date))
-                .param("startTime", String.valueOf(startTime))
-                .param("endDate", String.valueOf(date))
-                .param("endTime", String.valueOf(endTime)))
+                .param("startDateTime", startDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .param("endDateTime", endDateTime.format(DateTimeFormatter.ISO_DATE_TIME)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MealTestData.MEALTO_MATCHER.contentJson(
                         MealsUtil.getFilteredTos(List.of(MealTestData.meal3, MealTestData.meal2, MealTestData.meal1),
-                                MealsUtil.DEFAULT_CALORIES_PER_DAY, startTime, endTime)));
+                                MealsUtil.DEFAULT_CALORIES_PER_DAY, startDateTime.toLocalTime(),
+                                endDateTime.toLocalTime())));
     }
 
     @Test
-    void update_AllOk_UpdateAndReturnOk() throws Exception {
-        Meal meal = MealTestData.getNew();
+    void update_AllOk_UpdateAndReturnNoContent() throws Exception {
+        Meal meal = MealTestData.getUpdated();
 
-        ResultActions resultActions = perform(MockMvcRequestBuilders.post(REST_URL)
+        perform(MockMvcRequestBuilders.put(REST_URL + meal.id())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(meal)))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
 
-        Meal created = MealTestData.MEAL_MATCHER.readFromJson(resultActions);
-        int newId = created.id();
-        meal.setId(newId);
-        MealTestData.MEAL_MATCHER.assertMatch(created, meal);
-        MealTestData.MEAL_MATCHER.assertMatch(created, mealService.get(newId, SecurityUtil.authUserId()));
+        MealTestData.MEAL_MATCHER.assertMatch(meal, mealService.get(meal.id(), SecurityUtil.authUserId()));
     }
 
+    @Test
+    void delete_AllOk_DeleteAndReturnNoContent() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + MealTestData.MEAL1_ID))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        int userId = SecurityUtil.authUserId();
+        Assertions.assertThatThrownBy(() -> mealService.get(MealTestData.MEAL1_ID, userId))
+                .isInstanceOf(NotFoundException.class);
+    }
 }
