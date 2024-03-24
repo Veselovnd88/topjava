@@ -1,13 +1,12 @@
 package ru.javawebinar.topjava.web.user;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.MealTestData;
-import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -96,9 +95,9 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Profile(Profiles.DATAJPA)
+    @EnabledIf("isDataJpaProfile")
     void getWithMeals() throws Exception {
-        ResultActions resultActions = perform(MockMvcRequestBuilders.get(REST_URL + "/with-meals/" + USER_ID))
+        ResultActions resultActions = perform(MockMvcRequestBuilders.get(REST_URL + USER_ID + "/with-meals"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(USER_MATCHER.contentJson(user));

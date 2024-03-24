@@ -11,18 +11,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.util.MealsUtil;
-import ru.javawebinar.topjava.util.converter.StringToLocalDateConverter;
-import ru.javawebinar.topjava.util.converter.StringToLocalTimeConverter;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 class MealRestControllerTest extends AbstractControllerTest {
@@ -69,20 +62,15 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween_AllOk_ReturnListOfFilteredMealTos() throws Exception {
-        LocalDate localDate = LocalDate.of(2020, Month.JANUARY, 30);
-        LocalTime startTime = LocalTime.of(10, 0);
-        LocalTime endTime = LocalTime.of(20, 0);
         perform(MockMvcRequestBuilders.get(REST_URL + "/filter")
-                .param("startDate", localDate.format(DateTimeFormatter.ofPattern(StringToLocalDateConverter.DATE_PATTERN)))
-                .param("startTime", startTime.format(DateTimeFormatter.ofPattern(StringToLocalTimeConverter.TIME_PATTERN)))
-                .param("endDate", localDate.format(DateTimeFormatter.ofPattern(StringToLocalDateConverter.DATE_PATTERN)))
-                .param("endTime", endTime.format(DateTimeFormatter.ofPattern(StringToLocalTimeConverter.TIME_PATTERN))))
+                .param("startDate", "2020-01-30")
+                .param("startTime", "10:00")
+                .param("endDate", "2020-01-30")
+                .param("endTime", "20:00"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MealTestData.MEALTO_MATCHER.contentJson(
-                        MealsUtil.getFilteredTos(List.of(MealTestData.meal3, MealTestData.meal2, MealTestData.meal1),
-                                MealsUtil.DEFAULT_CALORIES_PER_DAY, startTime, endTime)));
+                .andExpect(MealTestData.MEALTO_MATCHER.contentJson(List.of(MealTestData.mealTo2, MealTestData.mealTo1)));
     }
 
     @Test

@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.web.user;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.User;
 
 import java.net.URI;
@@ -68,8 +66,7 @@ public class AdminRestController extends AbstractUserController {
         return super.getByMail(email);
     }
 
-    @Profile(Profiles.DATAJPA)
-    @GetMapping("/with-meals/{id}")
+    @GetMapping("/{id}/with-meals")
     @Override
     public User getWithMeals(@PathVariable int id) {
         return super.getWithMeals(id);
