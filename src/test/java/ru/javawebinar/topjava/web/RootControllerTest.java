@@ -52,7 +52,6 @@ class RootControllerTest extends AbstractControllerTest {
                                 MealTestData.MEALTO_MATCHER.assertMatch(actual, MealTestData.mealTos);
                             }
                         }
-                ))
-                .andExpect(model().attribute("meals", MealTestData.mealTos));
+                ));
     }
 }
