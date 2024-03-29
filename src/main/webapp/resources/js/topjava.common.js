@@ -50,6 +50,20 @@ function save() {
     });
 }
 
+function saveRequestBody() {
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        contentType: 'application/json',
+        url: ctx.ajaxUrl,
+        data: form.serialize()
+    }).done(function () {
+        $("#editRow").modal("hide");
+        updateTable();
+        successNoty("Saved");
+    });
+}
+
 let failedNote;
 
 function closeNoty() {

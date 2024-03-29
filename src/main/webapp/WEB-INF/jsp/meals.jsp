@@ -59,17 +59,73 @@
                     <td>${meal.description}</td>
                     <td>${meal.calories}</td>
                     <td><a href="meals/update?id=${meal.id}"><spring:message code="common.update"/></a></td>
-                    <td><a href="meals/delete?id=${meal.id}"><spring:message code="common.delete"/></a></td>
+                    <td>
+
+                        <button class="btn btn-danger" onclick="deleteRow(${meal.id})">
+                            <span class="fa fa-remove"></span>
+                            <spring:message code="common.delete"/>
+                        </button>
+
+                            <%-- <a href="meals/delete?id=${meal.id}"><spring:message code="common.delete"/></a>--%>
+
+                    </td>
                 </tr>
             </c:forEach>
         </table>
     </div>
 </div>
-
+<%--
 
 <hr>
 <a href="meals/create"><spring:message code="meal.add"/></a>
-<hr>
+<hr>--%>
+
+<div class="modal fade" tabindex="-1" id="editRow">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><spring:message code="meal.add"/></h4>
+                <button type="button" class="close" data-dismiss="modal" onclick="closeNoty()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="detailsForm">
+                    <input type="hidden" id="id" name="id">
+
+                    <div class="form-group">
+                        <label for="dateTime" class="col-form-label"><spring:message code="meal.dateTime"/></label>
+                        <input type="datetime-local" value="${meal.dateTime}" name="dateTime" id="dateTime" required
+                               placeholder=<spring:message code="meal.dateTime"/>:>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="col-form-label"><spring:message
+                                code="meal.description"/></label>
+                        <input type="text" value="${meal.description}" size=40 name="description" id="description"
+                               required
+                               placeholder="<spring:message code="meal.description"/>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="calories" class="col-form-label"><spring:message code="meal.calories"/></label>
+                        <input type="number" value="${meal.calories}" name="calories" id="calories" required
+                               placeholder="<spring:message code="meal.placeholder-calories"/>">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeNoty()">
+                    <span class="fa fa-close"></span>
+                    <spring:message code="common.cancel"/>
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveRequestBody(
+                )">
+                    <span class="fa fa-check"></span>
+                    <spring:message code="common.save"/>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <jsp:include page="fragments/footer.jsp"/>
 </body>
