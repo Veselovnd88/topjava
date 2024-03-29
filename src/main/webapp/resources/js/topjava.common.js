@@ -50,13 +50,14 @@ function save() {
     });
 }
 
-function saveRequestBody() {
+function saveRequestBody(requestBody) {
+    console.log(requestBody)
     $.ajax({
         type: "POST",
         dataType: 'json',
         contentType: 'application/json',
         url: ctx.ajaxUrl,
-        data: form.serialize()
+        data: JSON.stringify(requestBody)
     }).done(function () {
         $("#editRow").modal("hide");
         updateTable();

@@ -118,6 +118,11 @@
                     <spring:message code="common.cancel"/>
                 </button>
                 <button type="button" class="btn btn-primary" onclick="saveRequestBody(
+                    {
+                    dateTime: $('#dateTime').val(),
+                    calories: $('#calories').val(),
+                    description: $('#description').val()
+                    }
                 )">
                     <span class="fa fa-check"></span>
                     <spring:message code="common.save"/>
