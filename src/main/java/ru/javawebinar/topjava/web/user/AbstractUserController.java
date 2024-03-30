@@ -54,7 +54,7 @@ public abstract class AbstractUserController {
         return service.getWithMeals(id);
     }
 
-    public void enable(int id, boolean enabled) {
+    public void updateStatus(int id, boolean enabled) {
         log.info("change status of user: {} for: {}", id, enabled);
         service.changeStatus(id, enabled);
     }
