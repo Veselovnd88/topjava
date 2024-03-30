@@ -45,3 +45,15 @@ $(function () {
         })
     );
 });
+
+function changeStatus(userId, status) {
+    console.log("Checkbox pressed: current value: " + status + " user: " + userId)
+    $.ajax({
+            url: "rest/admin/users/" + userId + "/enable?enabled=" + status,
+            type: "POST"
+        }
+    ).done(function () {
+        updateTable();
+        successNoty("User status updated");
+    });
+}
