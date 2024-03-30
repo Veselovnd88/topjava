@@ -13,19 +13,13 @@ $(function () {
             "info": true,
             "columns": [
                 {
-                    "data": "name"
+                    "data": "dateTime"
                 },
                 {
-                    "data": "email"
+                    "data": "calories"
                 },
                 {
-                    "data": "roles"
-                },
-                {
-                    "data": "enabled"
-                },
-                {
-                    "data": "registered"
+                    "data": "description"
                 },
                 {
                     "defaultContent": "Edit",
@@ -45,3 +39,14 @@ $(function () {
         })
     );
 });
+
+function updateTableFiltered() {
+    $.ajax({
+        type: "GET",
+        url: ctx.ajaxUrl + 'filter',
+        data: $('#filterParams').serialize(),
+        success: function (data) {
+            ctx.datatableApi.clear().rows.add(data).draw();
+        }
+    })
+}

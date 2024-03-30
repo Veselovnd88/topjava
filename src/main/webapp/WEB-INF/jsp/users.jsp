@@ -17,6 +17,7 @@
             <span class="fa fa-plus"></span>
             <spring:message code="common.add"/>
         </button>
+
         <table class="table table-striped" id="datatable">
             <thead>
             <tr>

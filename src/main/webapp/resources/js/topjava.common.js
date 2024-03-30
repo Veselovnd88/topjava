@@ -38,6 +38,7 @@ function updateTable() {
     });
 }
 
+
 function save() {
     $.ajax({
         type: "POST",
