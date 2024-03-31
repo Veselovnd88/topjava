@@ -61,7 +61,7 @@ function saveRequestBody(requestBody) {
         data: JSON.stringify(requestBody)
     }).done(function () {
         $("#editRow").modal("hide");
-        updateTable();
+        updateTableFiltered();
         successNoty("Saved");
     });
 }
