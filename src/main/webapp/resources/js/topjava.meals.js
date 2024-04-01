@@ -1,4 +1,4 @@
-const mealAjaxUrl = "rest/profile/meals/";
+const mealAjaxUrl = "profile/meals/";
 
 // https://stackoverflow.com/a/5064235/548473
 const ctx = {
@@ -33,7 +33,7 @@ $(function () {
             "order": [
                 [
                     0,
-                    "asc"
+                    "desc"
                 ]
             ]
         })
@@ -49,4 +49,16 @@ function updateTableFiltered() {
             ctx.datatableApi.clear().rows.add(data).draw();
         }
     })
+}
+
+function save() {
+    $.ajax({
+        type: "POST",
+        url: ctx.ajaxUrl,
+        data: form.serialize()
+    }).done(function () {
+        $("#editRow").modal("hide");
+        updateTableFiltered();
+        successNoty("Saved");
+    });
 }

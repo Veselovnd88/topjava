@@ -69,16 +69,7 @@
                     <td>${meal.description}</td>
                     <td>${meal.calories}</td>
                     <td><a href="meals/update?id=${meal.id}"><spring:message code="common.update"/></a></td>
-                    <td>
-
-                        <button class="btn btn-danger" onclick="deleteRow(${meal.id})">
-                            <span class="fa fa-remove"></span>
-                            <spring:message code="common.delete"/>
-                        </button>
-
-                            <%-- <a href="meals/delete?id=${meal.id}"><spring:message code="common.delete"/></a>--%>
-
-                    </td>
+                    <td><a class="delete"><span class="fa fa-remove"></span></a></td>
                 </tr>
             </c:forEach>
         </table>
@@ -127,13 +118,7 @@
                     <span class="fa fa-close"></span>
                     <spring:message code="common.cancel"/>
                 </button>
-                <button type="button" class="btn btn-primary" onclick="saveRequestBody(
-                    {
-                    dateTime: $('#dateTime').val(),
-                    calories: $('#calories').val(),
-                    description: $('#description').val()
-                    }
-                )">
+                <button type="button" class="btn btn-primary" onclick="save()">
                     <span class="fa fa-check"></span>
                     <spring:message code="common.save"/>
                 </button>

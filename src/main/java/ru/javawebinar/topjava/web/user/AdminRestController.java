@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -66,12 +67,14 @@ public class AdminRestController extends AbstractUserController {
         return super.getByMail(email);
     }
 
+    @Override
     @GetMapping("/{id}/with-meals")
     public User getWithMeals(@PathVariable int id) {
         return super.getWithMeals(id);
     }
 
-    @PostMapping("/{id}/enable")
+    @Override
+    @PatchMapping("/{id}/enable")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateStatus(@PathVariable int id, @RequestParam("enabled") boolean enabled) {
         super.updateStatus(id, enabled);

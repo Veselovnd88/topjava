@@ -47,10 +47,9 @@ $(function () {
 });
 
 function changeStatus(userId, status) {
-    console.log("Checkbox pressed: current value: " + status + " user: " + userId)
     $.ajax({
-            url: "rest/admin/users/" + userId + "/enable?enabled=" + status,
-            type: "POST"
+            url: ctx.ajaxUrl + userId + "/enable?enabled=" + status,
+            type: "PATCH"
         }
     ).done(function () {
         updateTable();

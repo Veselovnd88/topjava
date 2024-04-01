@@ -51,21 +51,6 @@ function save() {
     });
 }
 
-function saveRequestBody(requestBody) {
-    console.log(requestBody)
-    $.ajax({
-        type: "POST",
-        dataType: 'json',
-        contentType: 'application/json',
-        url: ctx.ajaxUrl,
-        data: JSON.stringify(requestBody)
-    }).done(function () {
-        $("#editRow").modal("hide");
-        updateTableFiltered();
-        successNoty("Saved");
-    });
-}
-
 let failedNote;
 
 function closeNoty() {
