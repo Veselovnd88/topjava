@@ -47,9 +47,8 @@ $(function () {
 });
 
 function changeStatus(checkbox, userId) {
-    let status = checkbox.checked;
-    let rowIndex = ctx.datatableApi.row($(checkbox).closest('tr')).index();
-    let trElement = ctx.datatableApi.row(rowIndex).node();
+    const status = checkbox.checked;
+    const trElement = $(checkbox).closest('tr');
 
     $.ajax({
             url: ctx.ajaxUrl + userId + "/enable?enabled=" + status,
