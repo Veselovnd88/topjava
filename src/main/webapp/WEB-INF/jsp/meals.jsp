@@ -39,7 +39,6 @@
                 <spring:message code="meal.filter-reset"/>
             </button>
 
-
             <%--<button type="submit"><spring:message code="meal.filter"/></button>--%>
         </form>
 
@@ -118,7 +117,7 @@
                     <span class="fa fa-close"></span>
                     <spring:message code="common.cancel"/>
                 </button>
-                <button type="button" class="btn btn-primary" onclick="save()">
+                <button type="button" class="btn btn-primary" onclick="save(updateTableFiltered)">
                     <span class="fa fa-check"></span>
                     <spring:message code="common.save"/>
                 </button>

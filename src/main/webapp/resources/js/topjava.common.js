@@ -39,14 +39,14 @@ function updateTable() {
 }
 
 
-function save() {
+function save(updateTableCallBack) {
     $.ajax({
         type: "POST",
         url: ctx.ajaxUrl,
         data: form.serialize()
     }).done(function () {
         $("#editRow").modal("hide");
-        updateTable();
+        updateTableCallBack();
         successNoty("Saved");
     });
 }

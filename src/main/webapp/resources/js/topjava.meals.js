@@ -51,18 +51,6 @@ function updateTableFiltered() {
     })
 }
 
-function save() {
-    $.ajax({
-        type: "POST",
-        url: ctx.ajaxUrl,
-        data: form.serialize()
-    }).done(function () {
-        $("#editRow").modal("hide");
-        updateTableFiltered();
-        successNoty("Saved");
-    });
-}
-
 function resetFilter() {
     $("#filterParams")[0].reset();
     updateTable();
