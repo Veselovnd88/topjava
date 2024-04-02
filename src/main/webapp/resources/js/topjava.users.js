@@ -46,13 +46,20 @@ $(function () {
     );
 });
 
-function changeStatus(userId, status) {
+function changeStatus(checkbox, userId) {
+    let status = checkbox.checked;
+    let rowIndex = ctx.datatableApi.row($(checkbox).closest('tr')).index();
+    let trElement = ctx.datatableApi.row(rowIndex).node();
+
     $.ajax({
             url: ctx.ajaxUrl + userId + "/enable?enabled=" + status,
             type: "PATCH"
         }
     ).done(function () {
-        updateTable();
         successNoty("User status updated");
+        $(trElement).attr('user-enabled', status);
+    }).fail(function () {
+        $(trElement).attr('user-enabled', !status);
+        checkbox.checked = !status
     });
 }

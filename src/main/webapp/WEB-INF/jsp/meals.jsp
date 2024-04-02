@@ -34,7 +34,7 @@
                 <span class="fa fa-filter"></span>
                 <spring:message code="meal.filter"/>
             </button>
-            <button type="button" class="btn btn-primary" onclick=updateTable()>
+            <button type="button" class="btn btn-primary" onclick=resetFilter()>
                 <span class="fa fa-fire"></span>
                 <spring:message code="meal.filter-reset"/>
             </button>

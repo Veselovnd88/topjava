@@ -62,3 +62,8 @@ function save() {
         successNoty("Saved");
     });
 }
+
+function resetFilter() {
+    $("#filterParams")[0].reset();
+    updateTable();
+}
