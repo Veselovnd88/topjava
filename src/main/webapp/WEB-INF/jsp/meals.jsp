@@ -125,14 +125,11 @@
     </div>
 </div>
 <jsp:include page="fragments/footer.jsp"/>
-</body>
-<script type="text/javascript">
-    const i18n = {}; // https://learn.javascript.ru/object
-    i18n["addTitle"] = '<spring:message code="meal.add"/>';
-    i18n["editTitle"] = '<spring:message code="meal.edit"/>';
 
-    <c:forEach var="key" items='${["common.deleted","common.saved","common.enabled","common.disabled","common.errorStatus","common.confirm"]}'>
-    i18n["${key}"] = "<spring:message code="${key}"/>";
-    </c:forEach>
-</script>
+<c:set var="addTitle"><spring:message code="meal.add"/></c:set>
+<c:set var="editTitle"><spring:message code="meal.edit"/></c:set>
+<%@ include file="i18n.jsp" %>
+
+</body>
+
 </html>
