@@ -17,6 +17,19 @@ function clearFilter() {
     $.get(mealAjaxUrl, updateTableByData);
 }
 
+// http://api.jquery.com/jQuery.ajax/#using-converters
+$.ajaxSetup({
+    converters: {
+        "text json": function (stringData) {
+            return JSON.parse(stringData,
+                function (key, value) {
+                    return (key === 'dateTime') ? value.substring(0, 16).replace('T', ' ') : value;
+                }
+            );
+        }
+    }
+});
+
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
@@ -28,13 +41,7 @@ $(function () {
             "info": true,
             "columns": [
                 {
-                    "data": "dateTime",
-                    "render": function (date, type, row) {
-                        if (type === "display") {
-                            return date.replace('T', " ")
-                        }
-                        return date;
-                    }
+                    "data": "dateTime"
                 },
                 {
                     "data": "description"
@@ -68,4 +75,39 @@ $(function () {
             }
         })
     );
+
+    const dateOptions = {
+        autoclose: true,
+        todayBtn: true,
+        weekStart: 1,
+        todayHighlight: true,
+        timepicker: false,
+        format: 'Y-m-d',
+        formatDate: 'Y-m-d',
+    };
+
+    $('#endDate').datetimepicker({
+        ...dateOptions
+    });
+
+    $('#startDate').datetimepicker({
+        ...dateOptions
+    });
+
+    const timeOptions = {
+        datepicker: false,
+        format: 'H:i'
+    }
+
+    $('#endTime').datetimepicker({
+        ...timeOptions
+    })
+
+    $('#startTime').datetimepicker({
+        ...timeOptions
+    })
+
+    $('#dateTime').datetimepicker({
+        format: 'Y-m-d H:i'
+    })
 });

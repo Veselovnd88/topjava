@@ -46,6 +46,8 @@ function updateTableByData(data) {
 }
 
 function save() {
+    let field = form.find("input[name=dateTime]");
+    if (field.length > 0) field.val(field.val().replace(" ", "T"));
     $.ajax({
         type: "POST",
         url: ctx.ajaxUrl,
