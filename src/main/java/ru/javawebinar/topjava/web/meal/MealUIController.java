@@ -48,7 +48,6 @@ public class MealUIController extends AbstractMealController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<String> createOrUpdate(@Valid NewMealTo mealTo, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.unprocessableEntity().body(ValidationUtil.convertBindingResultToString(result));
@@ -56,7 +55,7 @@ public class MealUIController extends AbstractMealController {
         if (mealTo.isNew()) {
             super.create(MealsUtil.createNewFromTo(mealTo));
         } else {
-            super.update(MealsUtil.updateFromTo(mealTo, mealTo.id()), mealTo.id());
+            super.update(MealsUtil.createNewFromTo(mealTo), mealTo.id());
         }
         return ResponseEntity.ok().build();
     }
