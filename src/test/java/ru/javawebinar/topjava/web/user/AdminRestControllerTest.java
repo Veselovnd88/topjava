@@ -167,4 +167,16 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnprocessableEntity());
         ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL, field);
     }
+
+    @ParameterizedTest
+    @ArgumentsSource(InvalidUserArgumentsProvider.class)
+    void update_ValidationFailed_ReturnError(User user, String field) throws Exception {
+        String url = REST_URL + user.getId();
+        ResultActions resultActions = perform(MockMvcRequestBuilders.put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(jsonWithPassword(user, user.getPassword())))
+                .andExpect(status().isUnprocessableEntity());
+        ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, url, field);
+    }
 }

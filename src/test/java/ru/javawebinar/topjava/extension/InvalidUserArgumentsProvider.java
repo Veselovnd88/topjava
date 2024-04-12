@@ -20,18 +20,18 @@ public class InvalidUserArgumentsProvider implements ArgumentsProvider {
 
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
-        User blankName = new User(null, "", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
-        User noName = new User(null, "", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
-        User shortName = new User(null, "N", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
-        User longName = new User(null, "1".repeat(129), "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
-        User blankEmail = new User(null, "New", "", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
-        User wrongEmail = new User(null, "New", "12312341234", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
-        User longEmail = new User(null, "New", "new@gmail.com".repeat(40), "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
-        User blankPassword = new User(null, "New", "new@gmail.com", "", 1555, false, new Date(), Collections.singleton(Role.USER));
-        User shortPassword = new User(null, "New", "new@gmail.com", "1234", 1555, false, new Date(), Collections.singleton(Role.USER));
-        User longPassword = new User(null, "New", "new@gmail.com", "1".repeat(129), 1555, false, new Date(), Collections.singleton(Role.USER));
-        User lessCalories = new User(null, "New", "new@gmail.com", "newPass", 5, false, new Date(), Collections.singleton(Role.USER));
-        User tooMuchCalories = new User(null, "New", "new@gmail.com", "newPass", 100001, false, new Date(), Collections.singleton(Role.USER));
+        User blankName = new User(1, "", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
+        User noName = new User(1, "", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
+        User shortName = new User(1, "N", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
+        User longName = new User(1, "1".repeat(129), "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
+        User blankEmail = new User(1, "New", "", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
+        User wrongEmail = new User(1, "New", "12312341234", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
+        User longEmail = new User(1, "New", "new@gmail.com".repeat(40), "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
+        User blankPassword = new User(1, "New", "new@gmail.com", "", 1555, false, new Date(), Collections.singleton(Role.USER));
+        User shortPassword = new User(1, "New", "new@gmail.com", "1234", 1555, false, new Date(), Collections.singleton(Role.USER));
+        User longPassword = new User(1, "New", "new@gmail.com", "1".repeat(129), 1555, false, new Date(), Collections.singleton(Role.USER));
+        User lessCalories = new User(1, "New", "new@gmail.com", "newPass", 5, false, new Date(), Collections.singleton(Role.USER));
+        User tooMuchCalories = new User(1, "New", "new@gmail.com", "newPass", 100001, false, new Date(), Collections.singleton(Role.USER));
 
         return Stream.of(
                 Arguments.of(blankName, NAME),
