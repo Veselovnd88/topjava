@@ -17,6 +17,6 @@ public class ResultActionErrorFieldsCheckUtil {
         resultActions.andExpect(MockMvcResultMatchers.status().isUnprocessableEntity())
                 .andExpect(MockMvcResultMatchers.jsonPath(JSON_URL, Matchers.containsString(url)))
                 .andExpect(MockMvcResultMatchers.jsonPath(JSON_TYPE).value(ErrorType.VALIDATION_ERROR.toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath(JSON_DETAIL, Matchers.containsString(fieldName)));
+                .andExpect(MockMvcResultMatchers.jsonPath(JSON_DETAIL, Matchers.containsStringIgnoringCase(fieldName)));
     }
 }
