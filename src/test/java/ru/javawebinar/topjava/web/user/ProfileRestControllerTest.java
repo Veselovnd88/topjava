@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.ResultActionErrorFieldsCheckUtil;
 import ru.javawebinar.topjava.extension.InvalidUserArgumentsProvider;
+import ru.javawebinar.topjava.extension.annotation.NullPasswordUser;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.UserTo;
@@ -115,5 +116,24 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(UsersUtil.asTo(badUser))))
                 .andExpect(status().isUnprocessableEntity());
         ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL, field);
+    }
+
+    @Test
+    void register_ValidationFailedWithNullPassword_ReturnError(@NullPasswordUser User badUser) throws Exception {
+        ResultActions resultActions = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(UsersUtil.asTo(badUser))))
+                .andExpect(status().isUnprocessableEntity());
+        ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL, "password");
+    }
+
+    @Test
+    void update_ValidationFailedWithNullPassword_ReturnError(@NullPasswordUser User badUser) throws Exception {
+        ResultActions resultActions = perform(MockMvcRequestBuilders.put(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(UsersUtil.asTo(badUser))))
+                .andExpect(status().isUnprocessableEntity());
+        ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL, "password");
     }
 }

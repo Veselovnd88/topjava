@@ -9,10 +9,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.ResultActionErrorFieldsCheckUtil;
 import ru.javawebinar.topjava.extension.InvalidUserArgumentsProvider;
+import ru.javawebinar.topjava.extension.annotation.NullPasswordUser;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
+import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -178,5 +180,26 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(jsonWithPassword(user, user.getPassword())))
                 .andExpect(status().isUnprocessableEntity());
         ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, url, field);
+    }
+
+    @Test
+    void create_ValidationFailedWithNullPassword_ReturnError(@NullPasswordUser User user) throws Exception {
+        ResultActions resultActions = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(user)))
+                .andExpect(status().isUnprocessableEntity());
+        ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL, "password");
+    }
+
+    @Test
+    void update_ValidationFailedWithNullPassword_ReturnError(@NullPasswordUser User user) throws Exception {
+        String url = REST_URL + user.getId();
+        ResultActions resultActions = perform(MockMvcRequestBuilders.put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(JsonUtil.writeValue(user)))
+                .andExpect(status().isUnprocessableEntity());
+        ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, url, "password");
     }
 }
