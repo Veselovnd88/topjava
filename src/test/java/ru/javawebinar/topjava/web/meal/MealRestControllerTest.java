@@ -2,10 +2,14 @@ package ru.javawebinar.topjava.web.meal;
 
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.javawebinar.topjava.ResultActionErrorFieldsCheckUtil;
+import ru.javawebinar.topjava.extension.BadMealArgumentsProvider;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -16,7 +20,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.MealTestData.ADMIN_MEAL_ID;
+import static ru.javawebinar.topjava.MealTestData.MEAL1_ID;
+import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
+import static ru.javawebinar.topjava.MealTestData.TO_MATCHER;
+import static ru.javawebinar.topjava.MealTestData.getNew;
+import static ru.javawebinar.topjava.MealTestData.getUpdated;
+import static ru.javawebinar.topjava.MealTestData.meal1;
+import static ru.javawebinar.topjava.MealTestData.meal5;
+import static ru.javawebinar.topjava.MealTestData.meals;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 import static ru.javawebinar.topjava.UserTestData.user;
@@ -123,5 +135,27 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andExpect(TO_MATCHER.contentJson(getTos(meals, user.getCaloriesPerDay())));
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BadMealArgumentsProvider.class)
+    void create_BadMeal_ReturnError(Meal badMeal, String field) throws Exception {
+        ResultActions resultActions = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(badMeal)))
+                .andExpect(status().isUnprocessableEntity());
+        ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL, field);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BadMealArgumentsProvider.class)
+    void update_BadMeal_ReturnError(Meal badMeal, String field) throws Exception {
+        ResultActions resultActions = perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(badMeal)))
+                .andExpect(status().isUnprocessableEntity());
+        ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL + MEAL1_ID, field);
     }
 }
