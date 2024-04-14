@@ -6,6 +6,10 @@
 <nav class="navbar navbar-dark bg-dark py-0">
     <div class="container">
         <a href="meals" class="navbar-brand"><img src="resources/images/icon-meal.png"> <spring:message code="app.title"/></a>
+        <a href="${pageContext.request.contextPath}?lang=en">English </a> |
+        <a href="${pageContext.request.contextPath}?lang=ru">Русский </a>
+        Current Locale : ${pageContext.response.locale}
+
         <sec:authorize access="isAuthenticated()">
             <form:form class="form-inline my-2" action="logout" method="post">
                 <sec:authorize access="hasRole('ADMIN')">
