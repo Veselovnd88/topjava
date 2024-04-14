@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.support.SessionStatus;
 import ru.javawebinar.topjava.to.UserTo;
-import ru.javawebinar.topjava.web.validation.EmailDuplicateValidator;
 import ru.javawebinar.topjava.web.SecurityUtil;
+import ru.javawebinar.topjava.web.validation.EmailDuplicateValidator;
 
 import javax.validation.Valid;
 
@@ -20,23 +20,25 @@ import javax.validation.Valid;
 @RequestMapping("/profile")
 public class ProfileUIController extends AbstractUserController {
 
+    private static final String PROFILE = "profile";
+
     @Autowired
     private EmailDuplicateValidator emailDuplicateValidator;
 
     @InitBinder
     private void initBinder(WebDataBinder binder) {
-        binder.setValidator(emailDuplicateValidator);
+        binder.addValidators(emailDuplicateValidator);
     }
 
     @GetMapping
     public String profile() {
-        return "profile";
+        return PROFILE;
     }
 
     @PostMapping
     public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
         if (result.hasErrors()) {
-            return "profile";
+            return PROFILE;
         } else {
             super.update(userTo, SecurityUtil.authUserId());
             SecurityUtil.get().setTo(userTo);
@@ -49,14 +51,14 @@ public class ProfileUIController extends AbstractUserController {
     public String register(ModelMap model) {
         model.addAttribute("userTo", new UserTo());
         model.addAttribute("register", true);
-        return "profile";
+        return PROFILE;
     }
 
     @PostMapping("/register")
     public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
         if (result.hasErrors()) {
             model.addAttribute("register", true);
-            return "profile";
+            return PROFILE;
         } else {
             super.create(userTo);
             status.setComplete();

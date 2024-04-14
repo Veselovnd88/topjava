@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.ResultActionErrorFieldsCheckUtil;
 import ru.javawebinar.topjava.extension.BadMealArgumentsProvider;
 import ru.javawebinar.topjava.model.Meal;
@@ -15,6 +17,9 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
+
+import java.time.LocalDateTime;
+import java.time.Month;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -157,5 +162,30 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(badMeal)))
                 .andExpect(status().isUnprocessableEntity());
         ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL + MEAL1_ID, field);
+    }
+
+    //https://stackoverflow.com/questions/37406714/cannot-test-expected-exception-when-using-transactional-with-commit
+    @Transactional(propagation = Propagation.NEVER)
+    @Test
+    void update_DuplicateDateTime_ReturnError() throws Exception {
+        Meal updated = new Meal(MEAL1_ID, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "constraint", 200);
+
+        ResultActions resultActions = perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(updated)));
+
+        ResultActionErrorFieldsCheckUtil.checkConflictErrorFields(resultActions, REST_URL + MEAL1_ID, "date time");
+    }
+
+    @Transactional(propagation = Propagation.NEVER)
+    @Test
+    void create_DuplicateDateTime_ReturnError() throws Exception {
+        Meal updated = new Meal(null, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "constraint", 200);
+
+        ResultActions resultActions = perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(updated)));
+
+        ResultActionErrorFieldsCheckUtil.checkConflictErrorFields(resultActions, REST_URL + MEAL1_ID, "date time");
     }
 }

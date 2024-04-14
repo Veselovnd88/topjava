@@ -15,8 +15,7 @@ public class InvalidUserArgumentsProvider implements ArgumentsProvider {
     public static final String NAME = "name";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
-    public static final String CALORIES = "caloriesPerDay";
-
+    public static final String CALORIES = "Daily calorie limit";
 
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {

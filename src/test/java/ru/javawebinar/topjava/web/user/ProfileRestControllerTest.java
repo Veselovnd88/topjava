@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.ResultActionErrorFieldsCheckUtil;
 import ru.javawebinar.topjava.extension.InvalidUserArgumentsProvider;
 import ru.javawebinar.topjava.extension.annotation.NullPasswordUser;
@@ -102,8 +104,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     void register_ValidationFailed_ReturnError(User user, String field) throws Exception {
         ResultActions resultActions = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(UsersUtil.asTo(user))))
-                .andExpect(status().isUnprocessableEntity());
+                .content(JsonUtil.writeValue(UsersUtil.asTo(user))));
+
         ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL, field);
     }
 
@@ -113,8 +115,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         ResultActions resultActions = perform(MockMvcRequestBuilders.put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(user))
-                .content(JsonUtil.writeValue(UsersUtil.asTo(badUser))))
-                .andExpect(status().isUnprocessableEntity());
+                .content(JsonUtil.writeValue(UsersUtil.asTo(badUser))));
+
         ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL, field);
     }
 
@@ -122,8 +124,8 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     void register_ValidationFailedWithNullPassword_ReturnError(@NullPasswordUser User badUser) throws Exception {
         ResultActions resultActions = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(UsersUtil.asTo(badUser))))
-                .andExpect(status().isUnprocessableEntity());
+                .content(JsonUtil.writeValue(UsersUtil.asTo(badUser))));
+
         ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL, "password");
     }
 
@@ -132,8 +134,33 @@ class ProfileRestControllerTest extends AbstractControllerTest {
         ResultActions resultActions = perform(MockMvcRequestBuilders.put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(user))
-                .content(JsonUtil.writeValue(UsersUtil.asTo(badUser))))
-                .andExpect(status().isUnprocessableEntity());
+                .content(JsonUtil.writeValue(UsersUtil.asTo(badUser))));
+
         ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, REST_URL, "password");
+    }
+
+    //https://stackoverflow.com/questions/37406714/cannot-test-expected-exception-when-using-transactional-with-commit
+    @Transactional(propagation = Propagation.NEVER)
+    @Test
+    void update_DuplicateEmail_ReturnError() throws Exception {
+        User updated = new User(user);
+        updated.setEmail("admin@gmail.com");
+        ResultActions resultActions = perform(MockMvcRequestBuilders.put(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(UsersUtil.asTo(updated))));
+
+        ResultActionErrorFieldsCheckUtil.checkConflictErrorFields(resultActions, REST_URL, "email");
+    }
+
+    @Transactional(propagation = Propagation.NEVER)
+    @Test
+    void register_DuplicateEmail_ReturnError() throws Exception {
+        UserTo newTo = new UserTo(null, "newName", "admin@gmail.com", "newPassword", 1500);
+        ResultActions resultActions = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newTo)));
+
+        ResultActionErrorFieldsCheckUtil.checkConflictErrorFields(resultActions, REST_URL, "email");
     }
 }

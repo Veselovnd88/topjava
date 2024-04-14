@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 public class BadMealArgumentsProvider implements ArgumentsProvider {
 
-    public static final String DATE = "dateTime";
+    public static final String DATE = "Date/Time";
     public static final String DESCRIPTION = "description";
     public static final String CALORIES = "calories";
 

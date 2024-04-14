@@ -16,6 +16,7 @@ import ru.javawebinar.topjava.web.ExceptionInfoHandler;
 
 @Component
 public class EmailDuplicateValidator implements Validator {
+
     private static final Logger log = LoggerFactory.getLogger(EmailDuplicateValidator.class);
 
     private final UserRepository repository;

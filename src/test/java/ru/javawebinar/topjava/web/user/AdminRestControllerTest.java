@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.ResultActionErrorFieldsCheckUtil;
 import ru.javawebinar.topjava.extension.InvalidUserArgumentsProvider;
 import ru.javawebinar.topjava.extension.annotation.NullPasswordUser;
@@ -201,5 +204,34 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(user)))
                 .andExpect(status().isUnprocessableEntity());
         ResultActionErrorFieldsCheckUtil.checkValidationErrorFields(resultActions, url, "password");
+    }
+
+    //https://stackoverflow.com/questions/37406714/cannot-test-expected-exception-when-using-transactional-with-commit
+    @Transactional(propagation = Propagation.NEVER)
+    @Test
+    void update_DuplicateEmail_ReturnError() throws Exception {
+        User updated = new User(admin);
+        updated.setEmail("user@yandex.ru");
+        ResultActions resultActions = perform(MockMvcRequestBuilders.put(REST_URL + ADMIN_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(jsonWithPassword(updated, updated.getPassword())));
+
+        ResultActionErrorFieldsCheckUtil.checkConflictErrorFields(resultActions, REST_URL + ADMIN_ID, "email");
+    }
+
+    @Transactional(propagation = Propagation.NEVER)
+    @Test
+    void create_DuplicateEmail_ReturnError() throws Exception {
+        User newUser = new User(admin);
+        newUser.setId(null);
+        newUser.setEmail("user@yandex.ru");
+        ResultActions resultActions = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin))
+                .content(jsonWithPassword(newUser, newUser.getPassword())))
+                .andDo(MockMvcResultHandlers.print());
+
+        ResultActionErrorFieldsCheckUtil.checkConflictErrorFields(resultActions, REST_URL, "email");
     }
 }
