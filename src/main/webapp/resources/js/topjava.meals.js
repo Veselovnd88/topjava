@@ -63,7 +63,7 @@ $(function () {
             $(row).attr("data-meal-excess", data.excess);
         }
     });
-
+    $.datetimepicker.setLocale(localeCode);
 //  http://xdsoft.net/jqplugins/datetimepicker/
     var startDate = $('#startDate');
     var endDate = $('#endDate');

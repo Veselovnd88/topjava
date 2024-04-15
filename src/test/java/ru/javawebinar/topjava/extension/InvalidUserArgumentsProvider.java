@@ -27,6 +27,7 @@ public class InvalidUserArgumentsProvider implements ArgumentsProvider {
         User wrongEmail = new User(1, "New", "12312341234", "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
         User longEmail = new User(1, "New", "new@gmail.com".repeat(40), "newPass", 1555, false, new Date(), Collections.singleton(Role.USER));
         User blankPassword = new User(1, "New", "new@gmail.com", "", 1555, false, new Date(), Collections.singleton(Role.USER));
+        User nullPassword = new User(1, "New", "new@gmail.com", null, 1555, false, new Date(), Collections.singleton(Role.USER));
         User shortPassword = new User(1, "New", "new@gmail.com", "1234", 1555, false, new Date(), Collections.singleton(Role.USER));
         User longPassword = new User(1, "New", "new@gmail.com", "1".repeat(129), 1555, false, new Date(), Collections.singleton(Role.USER));
         User lessCalories = new User(1, "New", "new@gmail.com", "newPass", 5, false, new Date(), Collections.singleton(Role.USER));
@@ -41,6 +42,7 @@ public class InvalidUserArgumentsProvider implements ArgumentsProvider {
                 Arguments.of(wrongEmail, EMAIL),
                 Arguments.of(longEmail, EMAIL),
                 Arguments.of(blankPassword, PASSWORD),
+                Arguments.arguments(nullPassword, PASSWORD),
                 Arguments.of(shortPassword, PASSWORD),
                 Arguments.of(longPassword, PASSWORD),
                 Arguments.of(lessCalories, CALORIES),

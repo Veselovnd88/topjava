@@ -101,6 +101,6 @@ public class ExceptionInfoHandler {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
         return new ErrorInfo(req.getRequestURL(), errorType, messageSourceAccessor.getMessage(errorType.getErrorCode()),
-                details.length == 0 ? new String[]{rootCause.toString()} : details);
+                details.length == 0 ? new String[]{rootCause.getMessage()} : details);
     }
 }

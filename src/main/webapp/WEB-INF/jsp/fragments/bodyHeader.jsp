@@ -33,3 +33,6 @@
         </sec:authorize>
     </div>
 </nav>
+<script type="text/javascript">
+    var localeCode = "${pageContext.response.locale}";
+</script>

@@ -9,7 +9,9 @@ import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.MealTestData.adminMeal1;
+import static ru.javawebinar.topjava.MealTestData.adminMeal2;
+import static ru.javawebinar.topjava.MealTestData.meals;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class UserTestData {
@@ -52,6 +54,9 @@ public class UserTestData {
     }
 
     public static String jsonWithPassword(User user, String passw) {
+        if (passw == null) {
+            return JsonUtil.writeValue(user);
+        }
         return JsonUtil.writeAdditionProps(user, "password", passw);
     }
 }
