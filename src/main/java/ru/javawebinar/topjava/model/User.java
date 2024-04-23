@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
 import org.hibernate.validator.constraints.Range;
@@ -25,11 +25,7 @@ import java.util.*;
 import static ru.javawebinar.topjava.util.UsersUtil.DEFAULT_CALORIES_PER_DAY;
 
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@NamedQueries({
-        @NamedQuery(name = User.DELETE, query = "DELETE FROM User u WHERE u.id=:id"),
-        @NamedQuery(name = User.BY_EMAIL, query = "SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email=?1"),
-        @NamedQuery(name = User.ALL_SORTED, query = "SELECT u FROM User u ORDER BY u.name, u.email"),
-})
+@NamedQueries({@NamedQuery(name = User.DELETE, query = "DELETE FROM User u WHERE u.id=:id"), @NamedQuery(name = User.BY_EMAIL, query = "SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email=?1"), @NamedQuery(name = User.ALL_SORTED, query = "SELECT u FROM User u ORDER BY u.name, u.email"),})
 @Entity
 @Table(name = "users")
 public class User extends AbstractNamedEntity implements HasIdAndEmail {
@@ -39,15 +35,12 @@ public class User extends AbstractNamedEntity implements HasIdAndEmail {
     public static final String ALL_SORTED = "User.getAllSorted";
 
     @Column(name = "email", nullable = false, unique = true)
-    @Email
-    @NotBlank
-    @Size(max = 128)
+    @Email @NotBlank @Size(max = 128)
     @NoHtml(groups = {View.Web.class})  // https://stackoverflow.com/questions/17480809
     private String email;
 
     @Column(name = "password", nullable = false)
-    @NotBlank
-    @Size(min = 5, max = 128)
+    @NotBlank @Size(min = 5, max = 128)
     // https://stackoverflow.com/a/12505165/548473
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -62,8 +55,7 @@ public class User extends AbstractNamedEntity implements HasIdAndEmail {
 
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
-            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_role")})
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_role")})
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
     //    @Fetch(FetchMode.SUBSELECT)
@@ -79,7 +71,7 @@ public class User extends AbstractNamedEntity implements HasIdAndEmail {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")//, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("dateTime DESC")
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
-    @JsonManagedReference
+    @ApiModelProperty(hidden = true)
     private List<Meal> meals;
 
     public User() {
@@ -162,13 +154,6 @@ public class User extends AbstractNamedEntity implements HasIdAndEmail {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email=" + email +
-                ", name=" + name +
-                ", enabled=" + enabled +
-                ", roles=" + roles +
-                ", caloriesPerDay=" + caloriesPerDay +
-                '}';
+        return "User{" + "id=" + id + ", email=" + email + ", name=" + name + ", enabled=" + enabled + ", roles=" + roles + ", caloriesPerDay=" + caloriesPerDay + '}';
     }
 }
